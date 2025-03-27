@@ -4,8 +4,7 @@ import Script from 'next/script'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 
-import { Navbar } from '@/components/navbar'
-import { Container } from '@/components/container'
+import { AppShell } from '@/components/app-shell'
 import { ResponsiveIndicator } from '@/components/responsive-indicator'
 
 import { ENV } from '@/lib/constants'
@@ -56,14 +55,7 @@ export default async function RootLayout({ children }: Readonly<Props>) {
   return (
     <html lang='en'>
       <body className={`${GeistSans.variable} ${GeistMono.variable} grid h-dvh place-items-center bg-[#3D3D3D] font-mono overflow-hidden`}>
-        <Container>
-          <div className='flex flex-col h-full'>
-            <div className='flex-1 overflow-y-auto min-h-0 pb-4'>{children}</div>
-            <div className='flex-shrink-0 navbar-container'>
-              <Navbar />
-            </div>
-          </div>
-        </Container>
+        <AppShell>{children}</AppShell>
         <Particles />
         <ResponsiveIndicator />
         <div className='fixed h-[300%] w-[300%] bg-grain-noise opacity-5 animate-grain pointer-events-none top-0' aria-hidden='true' />
