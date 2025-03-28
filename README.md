@@ -87,7 +87,15 @@ This project uses React 19 and modern dependencies that may have peer dependency
      - Key: `NPM_FLAGS`
      - Value: `--legacy-peer-deps`
 
-3. **Check the build logs**:
+3. **Note about TypeScript definitions**:
+   This project uses exact versions (without ^) for React TypeScript definitions to avoid dependency conflicts:
+
+   - `@types/react`: 19.0.12
+   - `@types/react-dom`: 19.0.4
+
+   If you encounter version not found errors, check npm registry for the latest available versions.
+
+4. **Check the build logs**:
    If the build fails, review the logs for specific dependency conflicts. The project includes:
    - An `.npmrc` file with `legacy-peer-deps=true`
    - Package overrides in `package.json` to manage React type conflicts
