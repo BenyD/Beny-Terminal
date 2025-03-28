@@ -28,6 +28,70 @@ A modern terminal-inspired personal website built with Next.js 15 and TailwindCS
 - [TypeScript](https://typescriptlang.org) - Type-safe JavaScript
 - [MDX](https://mdxjs.com) - Markdown for the component era
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/BenyD/beny.one.git
+   cd beny.one
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install --legacy-peer-deps
+   # or
+   yarn install --ignore-peer-deps
+   ```
+
+3. Set up environment variables:
+   Create a `.env.local` file with:
+
+   ```
+   UMAMI_API_KEY=your_api_key
+   UMAMI_WEBSITE_ID=your_website_id
+   UMAMI_SHARE_TOKEN=your_share_token
+   UMAMI_URL=https://cloud.umami.is
+   ```
+
+4. Run the development server:
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🚢 Deployment on Vercel
+
+This project uses React 19 and modern dependencies that may have peer dependency conflicts. To deploy successfully on Vercel:
+
+1. **Use the included vercel.json configuration**:
+   The project includes a `vercel.json` file that tells Vercel to use the `--legacy-peer-deps` flag during installation.
+
+2. **Enable legacy peer deps in Vercel dashboard**:
+   If you're still encountering issues, go to your project settings in the Vercel dashboard:
+
+   - Navigate to Settings > General
+   - Under Build & Development Settings, add an environment variable:
+     - Key: `NPM_FLAGS`
+     - Value: `--legacy-peer-deps`
+
+3. **Check the build logs**:
+   If the build fails, review the logs for specific dependency conflicts. The project includes:
+   - An `.npmrc` file with `legacy-peer-deps=true`
+   - Package overrides in `package.json` to manage React type conflicts
+
 ## 📝 Project Structure
 
 - `src/components` - Reusable UI components
