@@ -8,6 +8,8 @@ export const Navbar = () => {
   const segment = useSelectedLayoutSegment()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [pageViews, setPageViews] = useState<number | null>(null)
+  const [isLoadingStats, setIsLoadingStats] = useState(true)
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -18,8 +20,42 @@ export const Navbar = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
   }, [])
 
+  // Fetch total pageviews from our API endpoint
+  useEffect(() => {
+    const fetchPageViews = async () => {
+      try {
+        setIsLoadingStats(true)
+
+        // Fetch from our server API
+        const response = await fetch('/api/umami', { cache: 'no-store' })
+        const data = await response.json()
+
+        console.log('Navbar received data:', data)
+
+        // Check if we got a valid pageviews value (including 0)
+        if (data.pageviews?.value !== null && data.pageviews?.value !== undefined) {
+          // Always convert to number, even if it's 0
+          const viewsValue = Number(data.pageviews.value)
+          // Ensure we're not setting NaN as the value
+          setPageViews(isNaN(viewsValue) ? 0 : viewsValue)
+        } else {
+          setPageViews(0) // Default to 0 instead of null
+        }
+      } catch (error) {
+        console.error('Error fetching pageviews:', error)
+        setPageViews(0) // Default to 0 instead of null
+      } finally {
+        setIsLoadingStats(false)
+      }
+    }
+
+    fetchPageViews()
+  }, [])
+
   // Construct the Umami share URL using the environment variables
-  const umamiShareUrl = ENV.UMAMI_URL && ENV.UMAMI_SHARE_TOKEN ? `${ENV.UMAMI_URL}/share/${ENV.UMAMI_SHARE_TOKEN}` : 'https://cloud.umami.is/share/Oy2rnXyE1fyQlY4u/beny.one' // Fallback to hardcoded value if env vars not set
+  // Make sure to use just the token without the domain part
+  const shareToken = ENV.UMAMI_SHARE_TOKEN ? ENV.UMAMI_SHARE_TOKEN.split('/')[0] : 'Oy2rnXyE1fyQlY4u'
+  const umamiShareUrl = `${ENV.UMAMI_URL || 'https://cloud.umami.is'}/share/${shareToken}`
 
   return (
     <nav className={`select-none overflow-x-auto text-sm md:text-base lg:px-4 lg:py-3 border-t border-[#444444]/30 bg-[#121212]`}>
@@ -48,8 +84,12 @@ export const Navbar = () => {
           </a>
         </div>
         <div className='flex items-center gap-x-2 not-sr-only'>
-          <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='cursor-pointer hover:opacity-80 transition-opacity'>
-            <p>-- VIEW --</p>
+          <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-2'>
+            {isLoadingStats ? (
+              <span className='text-[#969696] text-xs'>-- ... --</span>
+            ) : (
+              <span className='text-[#969696] text-xs'>-- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS --</span>
+            )}
           </a>
         </div>
       </div>
@@ -93,7 +133,10 @@ export const Navbar = () => {
           <div className={`w-5 h-0.5 bg-[#969696] transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-[3px]' : ''}`}></div>
           <span className='text-[#969696] ml-2'>menu</span>
         </button>
-        <div className='flex items-center'>
+        <div className='flex items-center gap-2'>
+          <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='text-[#969696] flex items-center gap-1'>
+            {isLoadingStats ? <span className='text-xs'>-- ... --</span> : <span className='text-xs'>-- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS --</span>}
+          </a>
           <p className='text-[#969696]'>~ beny.one</p>
         </div>
       </div>

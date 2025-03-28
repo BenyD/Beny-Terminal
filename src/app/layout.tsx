@@ -60,8 +60,10 @@ export default async function RootLayout({ children }: Readonly<Props>) {
         <ResponsiveIndicator />
         <div className='fixed h-[300%] w-[300%] bg-grain-noise opacity-5 animate-grain pointer-events-none top-0' aria-hidden='true' />
         <div className='bg-grid-pattern absolute left-0 top-0 h-full w-full' />
-        {process.env.NODE_ENV === 'production' && <Script defer src='https://cloud.umami.is/script.js' data-website-id='b28d632c-a8a2-4f3d-99a6-a7749fbf6335' />}
+        {process.env.NODE_ENV === 'production' && <Script defer src='https://cloud.umami.is/script.js' data-website-id='1abbea7f-9003-4017-93b9-69922061d6f0' />}
       </body>
     </html>
   )
 }
+
+
