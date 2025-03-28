@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { ENV } from '@/lib/constants'
 
 export const Navbar = () => {
   const segment = useSelectedLayoutSegment()
@@ -16,6 +17,9 @@ export const Navbar = () => {
     document.addEventListener('fullscreenchange', handleFullscreenChange)
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
   }, [])
+
+  // Construct the Umami share URL using the environment variables
+  const umamiShareUrl = ENV.UMAMI_URL && ENV.UMAMI_SHARE_TOKEN ? `${ENV.UMAMI_URL}/share/${ENV.UMAMI_SHARE_TOKEN}` : 'https://cloud.umami.is/share/Oy2rnXyE1fyQlY4u/beny.one' // Fallback to hardcoded value if env vars not set
 
   return (
     <nav className={`select-none overflow-x-auto text-sm md:text-base lg:px-4 lg:py-3 border-t border-[#444444]/30 bg-[#121212]`}>
@@ -44,7 +48,9 @@ export const Navbar = () => {
           </a>
         </div>
         <div className='flex items-center gap-x-2 not-sr-only'>
-          <p>-- VIEW --</p>
+          <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='cursor-pointer hover:opacity-80 transition-opacity'>
+            <p>-- VIEW --</p>
+          </a>
         </div>
       </div>
 
