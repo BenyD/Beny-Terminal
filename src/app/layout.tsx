@@ -3,6 +3,8 @@ import { Metadata } from 'next'
 import Script from 'next/script'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { AppShell } from '@/components/app-shell'
 import { ResponsiveIndicator } from '@/components/responsive-indicator'
@@ -61,9 +63,9 @@ export default async function RootLayout({ children }: Readonly<Props>) {
         <div className='fixed h-[300%] w-[300%] bg-grain-noise opacity-5 animate-grain pointer-events-none top-0' aria-hidden='true' />
         <div className='bg-grid-pattern absolute left-0 top-0 h-full w-full' />
         {process.env.NODE_ENV === 'production' && <Script defer src='https://cloud.umami.is/script.js' data-website-id='1abbea7f-9003-4017-93b9-69922061d6f0' />}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
 }
-
-
