@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { ENV } from '@/lib/constants'
+import { SpotifyNowPlaying } from './spotify-now-playing'
 
 export const Navbar = () => {
   const segment = useSelectedLayoutSegment()
@@ -84,6 +85,7 @@ export const Navbar = () => {
           </a>
         </div>
         <div className='flex items-center gap-x-2 not-sr-only'>
+          <SpotifyNowPlaying />
           <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-2'>
             {isLoadingStats ? (
               <span className='text-[#969696] text-xs'>-- ... --</span>
@@ -134,6 +136,7 @@ export const Navbar = () => {
           <span className='text-[#969696] ml-2'>menu</span>
         </button>
         <div className='flex items-center gap-2'>
+          <SpotifyNowPlaying />
           <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='text-[#969696] flex items-center gap-1'>
             {isLoadingStats ? <span className='text-xs'>-- ... --</span> : <span className='text-xs'>-- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS --</span>}
           </a>

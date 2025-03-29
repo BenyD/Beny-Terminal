@@ -7,5 +7,9 @@ export const ENV = {
   UMAMI_WEBSITE_ID: process.env.UMAMI_WEBSITE_ID || '1abbea7f-9003-4017-93b9-69922061d6f0',
   UMAMI_API_KEY: process.env.UMAMI_API_KEY || '',
 
+  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID || '',
+  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET || '',
+  SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN || '',
+
   NODE_ENV: process.env.NODE_ENV || 'development'
 }

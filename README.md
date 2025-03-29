@@ -135,3 +135,16 @@ MIT
 ## 🙏 Credits
 
 Built by [Beny Dishon](https://github.com/BenyD)
+
+### Spotify Integration
+
+This website includes a Spotify integration that displays the song you're currently listening to. To set up this feature:
+
+1. Create a Spotify Developer application at [developer.spotify.com](https://developer.spotify.com/dashboard/applications)
+2. Set the following environment variables in your `.env.local` file:
+   ```
+   SPOTIFY_CLIENT_ID=your_spotify_client_id
+   SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+   SPOTIFY_REFRESH_TOKEN=your_spotify_refresh_token
+   ```
+3. To get your refresh token, follow [this guide](https://developer.spotify.com/documentation/general/guides/authorization/code-flow/) or use a tool like [spotify-refresh-token](https://github.com/spotify-api/spotify-refresh-token)
