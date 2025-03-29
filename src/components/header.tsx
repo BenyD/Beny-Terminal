@@ -2,6 +2,7 @@
 
 import { HTMLAttributes } from 'react'
 import { LennyFace } from './lenny-face'
+import { SpotifyNowPlaying } from './spotify-now-playing'
 
 interface HeaderProps extends HTMLAttributes<HTMLElement> {
   isFullscreen: boolean
@@ -29,9 +30,12 @@ export const Header = ({ isFullscreen, toggleFullscreen, ...props }: HeaderProps
 
       {/* Mobile header content */}
       <div className='flex items-center justify-center w-full lg:hidden'>
-        <div className='flex flex-row items-center gap-2'>
-          <div className='h-2.5 w-2.5 rounded-full bg-[#2BC840] animate-pulse'></div>
-          <p className='select-none font-semibold text-base'>Beny Dishon K</p>
+        <div className='flex flex-col items-center gap-1'>
+          <div className='flex flex-row items-center gap-2'>
+            <div className='h-2.5 w-2.5 rounded-full bg-[#2BC840] animate-pulse'></div>
+            <p className='select-none font-semibold text-base'>Beny Dishon K</p>
+          </div>
+          <SpotifyNowPlaying />
         </div>
       </div>
 

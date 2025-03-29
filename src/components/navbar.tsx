@@ -136,7 +136,6 @@ export const Navbar = () => {
           <span className='text-[#969696] ml-2'>menu</span>
         </button>
         <div className='flex items-center gap-2'>
-          <SpotifyNowPlaying />
           <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='text-[#969696] flex items-center gap-1'>
             {isLoadingStats ? <span className='text-xs'>-- ... --</span> : <span className='text-xs'>-- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS --</span>}
           </a>
@@ -214,7 +213,7 @@ const menu = [
   },
   {
     title: 'photos',
-    href: 'https://photos.beny.one'
+    href: '/coming-soon'
   },
   {
     title: 'articles',
