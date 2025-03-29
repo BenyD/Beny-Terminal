@@ -38,11 +38,43 @@ const config: Config = {
             boxShadow:
               '0px 0px 0px 1px rgba(165, 165, 165, 0.04), -11px 7px 9px -0.5px rgba(0, 0, 0, 0.04), -22px 14px 18px -1.5px rgba(0, 0, 0, 0.08), -45px 29px 37px -3px rgba(0, 0, 0, 0.16), -91px 59px 75px -6px rgba(0, 0, 0, 0.24), -182px 118px 150px -12px rgba(0, 0, 0, 0.48)'
           }
+        },
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' }
+        },
+        scanline: {
+          '0%': { transform: 'translateY(0%)' },
+          '100%': { transform: 'translateY(100%)' }
+        },
+        'wave-shadow': {
+          '0%, 100%': { boxShadow: '0 0 25px rgba(32, 245, 32, 0.1)' },
+          '50%': { boxShadow: '0 0 35px rgba(32, 245, 32, 0.3)' }
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        glitch: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '5%, 25%': { transform: 'translateX(-2px)' },
+          '10%, 30%': { transform: 'translateX(2px)' },
+          '15%': { transform: 'translateX(-1px)' },
+          '20%': { transform: 'translateX(1px)' }
+        },
+        typing: {
+          from: { width: '0' },
+          to: { width: '100%' }
         }
       },
       animation: {
         grain: 'animate-grain 8s steps(10) infinite',
-        'wave-shadow': 'animate-wave-shadow 8s ease-in-out infinite'
+        'wave-shadow': 'animate-wave-shadow 8s ease-in-out infinite',
+        blink: 'blink 1s step-end infinite',
+        scanline: 'scanline 6s linear infinite',
+        fadeIn: 'fadeIn 0.3s ease-in',
+        glitch: 'glitch 3s infinite',
+        typing: 'typing 1s steps(30) infinite alternate'
       },
       backgroundImage: {
         'grain-noise': "url('/grain.webp')",

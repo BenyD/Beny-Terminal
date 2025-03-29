@@ -202,6 +202,10 @@ const menu = [
     href: '/stats'
   },
   {
+    title: 'terminal',
+    href: '/terminal'
+  },
+  {
     title: 'resume',
     href: 'https://cv.beny.one'
   },
