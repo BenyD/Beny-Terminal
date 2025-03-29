@@ -68,7 +68,7 @@ export function TerminalOutput() {
     }
 
     return (
-      <div key={index} className={`my-1 ${output.isError ? 'text-red-400' : text}`}>
+      <div key={index} className={`my-1 ${output.isError ? 'text-red-400' : text} break-words`}>
         {String(output.content)}
       </div>
     )
@@ -77,9 +77,9 @@ export function TerminalOutput() {
   return (
     <div
       ref={outputRef}
-      className={`terminal-output overflow-y-auto p-4 font-mono text-sm leading-relaxed`}
+      className={`terminal-output overflow-y-auto p-2 md:p-4 font-mono text-xs md:text-sm leading-relaxed`}
       style={{
-        maxHeight: 'calc(100vh - 160px)',
+        maxHeight: 'calc(100% - 50px)',
         fontSize: `${terminal.fontSize}px`,
         opacity: terminal.opacity
       }}

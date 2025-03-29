@@ -8,7 +8,7 @@ const TerminalWithProvider = dynamic(() => import('@/components/terminal/termina
 
 export default function TerminalPage() {
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center p-4 bg-gray-950'>
+    <div className='flex h-full w-full flex-col items-center justify-center bg-gray-950'>
       <Suspense fallback={<div className='text-white'>Loading terminal...</div>}>
         <TerminalWithProvider />
       </Suspense>

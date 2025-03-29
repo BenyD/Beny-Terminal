@@ -7,7 +7,9 @@ import { Terminal } from './terminal'
 export default function TerminalWithProvider() {
   return (
     <TerminalProvider>
-      <Terminal />
+      <div className='w-full h-full'>
+        <Terminal />
+      </div>
     </TerminalProvider>
   )
 }

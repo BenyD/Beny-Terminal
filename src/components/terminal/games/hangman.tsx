@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 // Define the component props interface
 interface HangmanProps {
@@ -31,6 +31,18 @@ export function Hangman({ data, onGameUpdate }: HangmanProps) {
     hard: ['algorithm', 'asynchronous', 'deployment', 'architecture', 'infrastructure', 'optimization', 'refactoring']
   }
 
+  // Memoize the game state update function
+  const updateGameState = useCallback(() => {
+    onGameUpdate({
+      word,
+      guessedLetters,
+      wrongGuesses,
+      gameOver,
+      gameWon,
+      message
+    })
+  }, [word, guessedLetters, wrongGuesses, gameOver, gameWon, message, onGameUpdate])
+
   // Initialize game from saved data or create new game
   useEffect(() => {
     // If we have saved game data, restore it
@@ -57,15 +69,11 @@ export function Hangman({ data, onGameUpdate }: HangmanProps) {
 
   // Save game state when it changes
   useEffect(() => {
-    onGameUpdate({
-      word,
-      guessedLetters,
-      wrongGuesses,
-      gameOver,
-      gameWon,
-      message
-    })
-  }, [word, guessedLetters, wrongGuesses, gameOver, gameWon, message, onGameUpdate])
+    // Skip the initial render to avoid causing a loop with data
+    if (word) {
+      updateGameState()
+    }
+  }, [updateGameState])
 
   // Check if the game is won
   useEffect(() => {

@@ -13,11 +13,26 @@ export function Terminal() {
   const [showEffects] = useState(false)
   const [matrixActive, setMatrixActive] = useState(false)
   const [currentTime, setCurrentTime] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
 
   // Handle terminal tab switching
   const handleTabSwitch = (id: string) => {
     setActiveTab(id)
   }
+
+  // Check for mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    // Initialize
+    checkMobile()
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Apply theme styling
   const getThemeStyles = () => {
@@ -87,34 +102,33 @@ export function Terminal() {
 
   return (
     <div
-      className={`terminal-container h-full flex flex-col relative ${bg} ${text} overflow-hidden ${border} rounded-md shadow-md`}
+      className={`terminal-container w-full h-full flex flex-col relative ${bg} ${text} overflow-hidden ${border} rounded-md shadow-md`}
       style={{ opacity: terminal.opacity }}
       onClick={focusInput}
     >
       {/* Terminal header with tabs and controls */}
       <div className={`terminal-header flex items-center justify-between border-b ${border} p-2`}>
-        <div className='flex gap-2'>
-          <div className='h-3 w-3 rounded-full bg-red-500 cursor-pointer'></div>
-          <div className='h-3 w-3 rounded-full bg-yellow-500 cursor-pointer'></div>
-          <div className='h-3 w-3 rounded-full bg-green-500 cursor-pointer'></div>
+        {/* Desktop title, hidden on mobile */}
+        <div className='hidden md:flex items-center'>
+          <span className={`${accent} font-semibold text-xs`}>Beny Terminal v1.0</span>
         </div>
 
         {/* Terminal tabs */}
-        <div className='terminal-tabs flex gap-1'>
+        <div className='terminal-tabs flex gap-1 overflow-x-auto max-w-[60%] md:max-w-[50%] mx-auto'>
           {terminal.activeTerminals.map(term => (
             <div
               key={term.id}
               onClick={() => handleTabSwitch(term.id)}
-              className={`px-3 py-1 rounded-t-md cursor-pointer text-xs ${activeTab === term.id ? `${accent} bg-black/20` : 'hover:bg-black/10'}`}
+              className={`px-2 md:px-3 py-1 rounded-t-md cursor-pointer text-xs truncate ${activeTab === term.id ? `${accent} bg-black/20` : 'hover:bg-black/10'}`}
             >
               {term.title}
             </div>
           ))}
         </div>
 
-        <div className='flex items-center gap-2 text-xs'>
-          <div className='px-2 rounded-md border border-gray-700'>{terminal.currentDirectory.join('/')}</div>
-          <div>Beny Terminal v1.0</div>
+        <div className={`flex items-center gap-2 text-xs`}>
+          <div className='px-2 rounded-md border border-gray-700 truncate max-w-[100px] md:max-w-none hidden sm:block'>{terminal.currentDirectory.join('/')}</div>
+          <div className='h-3 w-3 rounded-full bg-green-500 md:hidden'></div>
         </div>
       </div>
 
@@ -143,22 +157,22 @@ export function Terminal() {
         </div>
 
         {/* Terminal input area */}
-        <div className='terminal-input-area p-4 pt-0 border-t border-gray-800'>
+        <div className='terminal-input-area p-2 md:p-4 pt-0 border-t border-gray-800'>
           <TerminalInput />
         </div>
       </div>
 
       {/* Status bar */}
-      <div className={`terminal-status-bar text-xs p-1 border-t ${border} flex justify-between`}>
-        <div className='flex items-center gap-3'>
+      <div className={`terminal-status-bar text-[10px] md:text-xs p-1 border-t ${border} flex justify-between`}>
+        <div className='flex items-center gap-1 md:gap-3'>
           <span>{`CPU: ${Math.round(terminal.systemStats.cpu)}%`}</span>
           <span>{`MEM: ${Math.round(terminal.systemStats.memory)}%`}</span>
-          <span>{`NET: ${Math.round(terminal.systemStats.network)} KB/s`}</span>
+          <span className='hidden sm:inline'>{`NET: ${Math.round(terminal.systemStats.network)} KB/s`}</span>
         </div>
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-1 md:gap-3'>
           <span>{currentTime}</span>
-          <span>{`Uptime: ${Math.floor(terminal.uptime / 60)}m ${terminal.uptime % 60}s`}</span>
-          <span className='text-xs px-2 rounded bg-gray-800'>
+          <span className='hidden sm:inline'>{`Uptime: ${Math.floor(terminal.uptime / 60)}m ${terminal.uptime % 60}s`}</span>
+          <span className='text-[10px] md:text-xs px-2 rounded bg-gray-800'>
             {terminal.shell} | {terminal.theme}
           </span>
         </div>

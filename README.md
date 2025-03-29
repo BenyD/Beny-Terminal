@@ -12,13 +12,26 @@ A modern terminal-inspired personal website built with Next.js 15 and TailwindCS
 
 ## ✨ Features
 
-- Terminal-inspired UI design
-- Responsive layout with mobile menu
-- Page view tracking with Umami analytics
-- Projects showcase
-- Personal information sections
-- Articles section
-- Statistics dashboard
+- Modern, clean design with light/dark mode support
+- Interactive terminal interface with multiple commands
+- Portfolio showcase with project details and skills
+- Blog/Articles section with MDX support
+- Responsive layout for all devices
+- Fast page loads with Next.js App Router
+- SEO optimized with metadata
+
+## 🌦️ Weather API Integration
+
+The terminal now supports a `weather` command that shows current weather information for any location. To enable this feature:
+
+1. Sign up for a free API key at [OpenWeather](https://openweathermap.org/api)
+2. Add your API key to the `.env.local` file:
+   ```
+   OPENWEATHER_API_KEY=your_api_key_here
+   ```
+3. Restart the development server
+
+Without an API key, the weather command will still work but will display sample data.
 
 ## 🛠️ Tech Stack
 

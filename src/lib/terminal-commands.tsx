@@ -171,7 +171,7 @@ const commands: Record<string, CommandHandler> = {
     return {
       content: (
         <div className='history-list'>
-          {terminal.history.map((cmd, idx) => (
+          {terminal.history.map((cmd: string, idx: number) => (
             <div key={idx}>
               <span className='text-gray-500 mr-2'>{idx + 1}</span>
               <span>{cmd}</span>
@@ -256,6 +256,93 @@ const commands: Record<string, CommandHandler> = {
         </div>
       ),
       isHTML: true
+    }
+  },
+
+  // Weather command
+  weather: async (args, {}) => {
+    if (!args[0]) {
+      return {
+        content: 'Usage: weather [location] - Please specify a location (e.g., weather London)',
+        isError: true
+      }
+    }
+
+    const location = args.join(' ')
+
+    try {
+      // Call our weather API endpoint
+      const response = await fetch(`/api/weather?location=${encodeURIComponent(location)}`)
+      const data = await response.json()
+
+      if (data.error && !data.weather) {
+        return {
+          content: `Error: ${data.error}`,
+          isError: true
+        }
+      }
+
+      const { weather } = data
+
+      // Weather display with icon (if available)
+      const getWeatherEmoji = (condition: string) => {
+        const conditionMap: Record<string, string> = {
+          Clear: '☀️',
+          Clouds: '☁️',
+          Rain: '🌧️',
+          Drizzle: '🌦️',
+          Thunderstorm: '⛈️',
+          Snow: '❄️',
+          Mist: '🌫️',
+          Fog: '🌫️',
+          Haze: '🌫️',
+          Smoke: '🌫️',
+          Dust: '🌫️',
+          Sand: '🌫️',
+          Ash: '🌫️',
+          Squall: '💨',
+          Tornado: '🌪️'
+        }
+
+        return conditionMap[condition] || '🌡️'
+      }
+
+      return {
+        content: (
+          <div className='weather-display space-y-2'>
+            <div className='text-green-400 font-bold'>
+              Weather for {weather.location}
+              {weather.country ? `, ${weather.country}` : ''}
+            </div>
+
+            <div className='flex items-center gap-2'>
+              <span className='text-2xl'>{getWeatherEmoji(weather.condition)}</span>
+              <span className='text-xl'>{weather.temperature}°C</span>
+              <span className='text-gray-300'>({weather.description})</span>
+            </div>
+
+            <div className='grid grid-cols-2 gap-x-4'>
+              <div>
+                <span className='text-gray-400'>Humidity: </span>
+                <span>{weather.humidity}%</span>
+              </div>
+              <div>
+                <span className='text-gray-400'>Wind: </span>
+                <span>{weather.wind} m/s</span>
+              </div>
+            </div>
+
+            <div className='text-xs text-gray-400 mt-2'>Weather data powered by OpenWeatherMap</div>
+          </div>
+        ),
+        isHTML: true
+      }
+    } catch (error) {
+      console.error('Weather fetch error:', error)
+      return {
+        content: 'Failed to fetch weather data. Please try again later.',
+        isError: true
+      }
     }
   },
 
@@ -723,33 +810,5 @@ commands.resume = (args, {}) => {
     isHTML: true
   }
 }
-
-async function weatherCommand(args: string[], terminalState: any): Promise<CommandOutput> {
-  if (!args[0]) {
-    return { content: 'Please specify a location. Example: weather london', isError: true }
-  }
-
-  const location = args.join(' ')
-
-  try {
-    return {
-      content: (
-        <div className='weather-info space-y-2'>
-          <div className='font-bold text-green-400'>Weather information is not available in preview mode</div>
-          <div>Location: {location}</div>
-          <div>This would normally connect to a weather API to fetch real data.</div>
-        </div>
-      ),
-      isHTML: true
-    }
-  } catch (error) {
-    return {
-      content: `Error fetching weather data: ${error}`,
-      isError: true
-    }
-  }
-}
-
-commands.weather = weatherCommand
 
 export default commands

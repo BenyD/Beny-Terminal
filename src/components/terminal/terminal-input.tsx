@@ -15,10 +15,22 @@ export function TerminalInput() {
   const [suggestions, setSuggestions] = useState<AutocompleteSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedSuggestion, setSelectedSuggestion] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
 
-  // Focus input on mount
+  // Focus input on mount and check mobile
   useEffect(() => {
     focusInput()
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    // Initialize
+    checkMobile()
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [focusInput])
 
   // Basic commands for autocomplete
@@ -145,6 +157,13 @@ export function TerminalInput() {
 
   const getPromptText = () => {
     const dir = terminal.currentDirectory.join('/')
+
+    // Simplified prompt for mobile
+    if (isMobile) {
+      return `~/${dir}$ `
+    }
+
+    // Regular prompts for desktop
     switch (terminal.shell) {
       case 'zsh':
         return `beny@portfolio ~/${dir} % `
@@ -171,14 +190,14 @@ export function TerminalInput() {
   return (
     <div onClick={handleContainerClick} className='terminal-input relative'>
       <div className='flex items-center'>
-        <span className={`${getPromptStyle()} mr-2 shrink-0`}>{getPromptText()}</span>
+        <span className={`${getPromptStyle()} mr-2 shrink-0 text-xs md:text-sm`}>{getPromptText()}</span>
         <input
           ref={inputRef}
           type='text'
           value={input}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          className='flex-1 bg-transparent outline-none border-none text-white'
+          className='flex-1 bg-transparent outline-none border-none text-white text-xs md:text-sm'
           spellCheck='false'
           autoComplete='off'
           aria-label='Terminal input'
@@ -200,7 +219,7 @@ export function TerminalInput() {
               }}
             >
               <span className='text-white'>{suggestion.command}</span>
-              <span className='text-gray-400 text-xs'>{suggestion.description}</span>
+              <span className='text-gray-400 text-xs hidden sm:inline'>{suggestion.description}</span>
             </div>
           ))}
         </div>
