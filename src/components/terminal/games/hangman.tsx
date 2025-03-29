@@ -70,7 +70,7 @@ export function Hangman({ data, onGameUpdate }: HangmanProps) {
   // Save game state when it changes
   useEffect(() => {
     // Skip the initial render to avoid causing a loop with data
-    if (word) {
+    if (word && (guessedLetters.length > 0 || gameOver || gameWon)) {
       updateGameState()
     }
   }, [updateGameState])

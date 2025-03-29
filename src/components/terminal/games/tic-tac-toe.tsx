@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 // Define the component props interface
 interface TicTacToeProps {
@@ -27,14 +27,27 @@ export function TicTacToe({ data, onGameUpdate }: TicTacToeProps) {
     }
   }, [data])
 
-  // Save game state when it changes
-  useEffect(() => {
-    onGameUpdate({
+  // Memoize the update function to prevent recreation on each render
+  const updateGameState = useCallback(() => {
+    const gameData = {
       board,
       xIsNext,
       winner
-    })
+    }
+
+    // Only update if we actually have a board set
+    if (board.some(cell => cell !== null) || winner) {
+      onGameUpdate(gameData)
+    }
   }, [board, xIsNext, winner, onGameUpdate])
+
+  // Save game state when it changes
+  useEffect(() => {
+    // Skip the initial render or when board is empty
+    if (board.some(cell => cell !== null) || winner) {
+      updateGameState()
+    }
+  }, [updateGameState])
 
   // Check for winner
   const calculateWinner = (squares: Array<string | null>): string | null => {
@@ -94,6 +107,9 @@ export function TicTacToe({ data, onGameUpdate }: TicTacToeProps) {
     // Don't make a move if the game is over
     if (winner || isBoardFull(currentBoard)) return
 
+    let newBoard = [...currentBoard]
+    let moved = false
+
     // First, check if computer can win in the next move
     for (let i = 0; i < 9; i++) {
       if (!currentBoard[i]) {
@@ -101,60 +117,66 @@ export function TicTacToe({ data, onGameUpdate }: TicTacToeProps) {
         boardCopy[i] = 'O'
         if (calculateWinner(boardCopy) === 'O') {
           // Make winning move
-          setBoard(boardCopy)
-          setWinner('O')
-          return
+          newBoard = boardCopy
+          moved = true
+          break
         }
       }
     }
 
     // Next, check if player can win in the next move and block
-    for (let i = 0; i < 9; i++) {
-      if (!currentBoard[i]) {
-        const boardCopy = [...currentBoard]
-        boardCopy[i] = 'X'
-        if (calculateWinner(boardCopy) === 'X') {
-          // Block player's winning move
-          const actualBoard = [...currentBoard]
-          actualBoard[i] = 'O'
-          setBoard(actualBoard)
-          setXIsNext(true)
-          return
+    if (!moved) {
+      for (let i = 0; i < 9; i++) {
+        if (!currentBoard[i]) {
+          const boardCopy = [...currentBoard]
+          boardCopy[i] = 'X'
+          if (calculateWinner(boardCopy) === 'X') {
+            // Block player's winning move
+            newBoard[i] = 'O'
+            moved = true
+            break
+          }
         }
       }
     }
 
     // If center is free, take it
-    if (!currentBoard[4]) {
-      const newBoard = [...currentBoard]
+    if (!moved && !currentBoard[4]) {
       newBoard[4] = 'O'
-      setBoard(newBoard)
-      setXIsNext(true)
-      return
+      moved = true
     }
 
     // Take a random available corner
-    const corners = [0, 2, 6, 8]
-    const availableCorners = corners.filter(corner => !currentBoard[corner])
-    if (availableCorners.length > 0) {
-      const randomCorner = availableCorners[Math.floor(Math.random() * availableCorners.length)]
-      const newBoard = [...currentBoard]
-      newBoard[randomCorner] = 'O'
-      setBoard(newBoard)
-      setXIsNext(true)
-      return
+    if (!moved) {
+      const corners = [0, 2, 6, 8]
+      const availableCorners = corners.filter(corner => !currentBoard[corner])
+      if (availableCorners.length > 0) {
+        const randomCorner = availableCorners[Math.floor(Math.random() * availableCorners.length)]
+        newBoard[randomCorner] = 'O'
+        moved = true
+      }
     }
 
     // Take any available edge
-    const edges = [1, 3, 5, 7]
-    const availableEdges = edges.filter(edge => !currentBoard[edge])
-    if (availableEdges.length > 0) {
-      const randomEdge = availableEdges[Math.floor(Math.random() * availableEdges.length)]
-      const newBoard = [...currentBoard]
-      newBoard[randomEdge] = 'O'
-      setBoard(newBoard)
+    if (!moved) {
+      const edges = [1, 3, 5, 7]
+      const availableEdges = edges.filter(edge => !currentBoard[edge])
+      if (availableEdges.length > 0) {
+        const randomEdge = availableEdges[Math.floor(Math.random() * availableEdges.length)]
+        newBoard[randomEdge] = 'O'
+      }
+    }
+
+    // Update the board and check for winner
+    setBoard(newBoard)
+
+    const gameWinner = calculateWinner(newBoard)
+    if (gameWinner) {
+      setWinner(gameWinner)
+    } else if (isBoardFull(newBoard)) {
+      setWinner('Draw')
+    } else {
       setXIsNext(true)
-      return
     }
   }
 

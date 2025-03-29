@@ -398,10 +398,17 @@ export function TerminalProvider({ children }: { children: React.ReactNode }) {
 
   // Update game state
   const updateGameState = (game: string | null, data: Record<string, unknown> | null = null) => {
-    setTerminal(prev => ({
-      ...prev,
-      gameState: { activeGame: game, data }
-    }))
+    setTerminal(prev => {
+      // Skip update if game state is the same
+      if (prev.gameState.activeGame === game && JSON.stringify(prev.gameState.data) === JSON.stringify(data)) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        gameState: { activeGame: game, data }
+      }
+    })
   }
 
   // Focus the input field

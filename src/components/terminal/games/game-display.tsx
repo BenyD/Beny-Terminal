@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useTerminal } from '@/lib/terminal-context'
 import { Hangman } from './hangman'
 import { TicTacToe } from './tic-tac-toe'
@@ -9,13 +9,16 @@ export function GameDisplay() {
   const { terminal, updateGameState } = useTerminal()
   const { activeGame, data } = terminal.gameState
 
-  const handleGameUpdate = (gameData: Record<string, unknown>) => {
-    updateGameState(activeGame, gameData)
-  }
+  const handleGameUpdate = useCallback(
+    (gameData: Record<string, unknown>) => {
+      updateGameState(activeGame, gameData)
+    },
+    [activeGame, updateGameState]
+  )
 
-  const exitGame = () => {
+  const exitGame = useCallback(() => {
     updateGameState(null)
-  }
+  }, [updateGameState])
 
   return (
     <div className='game-overlay absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-20 p-4'>
