@@ -605,7 +605,7 @@ commands.about = (args, {}) => {
       <div className='about space-y-4'>
         <div className='text-green-400 font-bold text-lg'>About Beny</div>
         <div className='space-y-2'>
-          <p>Self taught software engineer based in Tel-Aviv, Israel.</p>
+          <p>Self taught software engineer based in Chennai, India.</p>
           <p>Love to learn new things and I'm always looking for new challenges to solve.</p>
         </div>
         <div className='text-gray-400 text-sm mt-4'>Type 'skills' to see my technical skills or 'projects' for my portfolio.</div>
