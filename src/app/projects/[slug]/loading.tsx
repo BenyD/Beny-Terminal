@@ -1,9 +1,9 @@
-import { Loading as LoadingIcon } from '@/components/icons'
+import { Loading as LoadingIcon } from '@/components/icons';
 
 export default function Loading() {
   return (
-    <div className='lg:h-[calc(100%-28px)] h-[calc(100%-35px)] grid place-items-center'>
-      <LoadingIcon className='animate-spin size-5' />
+    <div className="grid h-[calc(100%-35px)] place-items-center lg:h-[calc(100%-28px)]">
+      <LoadingIcon className="size-5 animate-spin" />
     </div>
-  )
+  );
 }

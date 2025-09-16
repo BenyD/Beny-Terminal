@@ -1,6 +1,6 @@
-import Package from '../../package.json'
+import Package from '../../package.json';
 
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -11,12 +11,12 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         src: '/favicon.ico',
         sizes: 'any',
-        type: 'image/x-icon'
-      }
+        type: 'image/x-icon',
+      },
     ],
     name: Package.name,
     short_name: Package.name,
     start_url: '/',
-    theme_color: '#242424'
-  }
+    theme_color: '#242424',
+  };
 }

@@ -10,7 +10,7 @@ export const logo = `
   |  __'.  |  _| _   | |\\ \\| |     \\ \\/ /
  _| |__) |_| |__/ | _| |_\\   |_    _|  |_
 |_______/|________||_____|\\_____||______|
-`
+`;
 
 // Terminal welcome message
 export const welcome = `
@@ -23,7 +23,7 @@ export const welcome = `
 │   Type 'skills' to see my skills                   │
 │                                                    │
 ╰────────────────────────────────────────────────────╯
-`
+`;
 
 // Skills visualization
 export const skillsArt = `
@@ -33,13 +33,13 @@ export const skillsArt = `
   TypeScript [████████░░] 80%
   HTML/CSS   [████████░░] 80%
   Next.js    [████████░░] 80%
-`
+`;
 
 // Cowsay template
 export const cowTemplate = (message: string) => {
-  const length = message.length
-  const top = '┌' + '─'.repeat(length + 2) + '┐'
-  const bottom = '└' + '─'.repeat(length + 2) + '┘'
+  const length = message.length;
+  const top = '┌' + '─'.repeat(length + 2) + '┐';
+  const bottom = '└' + '─'.repeat(length + 2) + '┘';
 
   return `
 ${top}
@@ -50,8 +50,8 @@ ${bottom}
             (__)\\       )\\/\\
                 ||----w |
                 ||     ||
-`
-}
+`;
+};
 
 // "404 Not Found" art
 export const notFound = `
@@ -63,10 +63,20 @@ export const notFound = `
     |_|  \\___/   |_|  
                       
     Not Found
-`
+`;
 
 // Terminal animation frames (for loading)
-export const loadingFrames = ['[    ]', '[=   ]', '[==  ]', '[=== ]', '[====]', '[ ===]', '[  ==]', '[   =]']
+export const loadingFrames = [
+  '[    ]',
+  '[=   ]',
+  '[==  ]',
+  '[=== ]',
+  '[====]',
+  '[ ===]',
+  '[  ==]',
+  '[   =]',
+];
 
 // Matrix-like symbols for Matrix effect
-export const matrixSymbols = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+export const matrixSymbols =
+  'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';

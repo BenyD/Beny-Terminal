@@ -43,3 +43,4 @@ CREATE TRIGGER update_file_metadata_updated_at
     BEFORE UPDATE ON file_metadata 
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
+

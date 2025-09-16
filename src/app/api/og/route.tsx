@@ -1,12 +1,12 @@
-import { ImageResponse } from '@vercel/og'
-import { NextRequest } from 'next/server'
-import { ENV } from '@/lib/constants'
+import { ImageResponse } from '@vercel/og';
+import { NextRequest } from 'next/server';
+import { ENV } from '@/lib/constants';
 
-export const runtime = 'edge'
+export const runtime = 'edge';
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = req.nextUrl
-  const postTitle = searchParams.get('title')
+  const { searchParams } = req.nextUrl;
+  const postTitle = searchParams.get('title');
 
   try {
     // Simple approach without loading external fonts
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#000',
-            backgroundImage: `url(${ENV.NEXT_PUBLIC_WEBSITE_URL}/og-bg.png)`
+            backgroundImage: `url(${ENV.NEXT_PUBLIC_WEBSITE_URL}/og-bg.png)`,
           }}
         >
           <p
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
               fontStyle: 'normal',
               fontWeight: 'bold',
               textAlign: 'center',
-              color: '#C6C6C6'
+              color: '#C6C6C6',
             }}
           >
             {postTitle}
@@ -44,11 +44,11 @@ export async function GET(req: NextRequest) {
       ),
       {
         width: 1200,
-        height: 620
+        height: 620,
       }
-    )
+    );
   } catch (error) {
-    console.error('Error generating OG image:', error)
-    return new Response('Error generating image', { status: 500 })
+    console.error('Error generating OG image:', error);
+    return new Response('Error generating image', { status: 500 });
   }
 }

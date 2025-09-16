@@ -1,210 +1,270 @@
-'use client'
-import Link from 'next/link'
-import { useSelectedLayoutSegment } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { ENV } from '@/lib/constants'
-import { SpotifyNowPlaying } from './spotify-now-playing'
+'use client';
+import Link from 'next/link';
+import { useSelectedLayoutSegment } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { ENV } from '@/lib/constants';
+import { SpotifyNowPlaying } from './spotify-now-playing';
 
 export const Navbar = () => {
-  const segment = useSelectedLayoutSegment()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [pageViews, setPageViews] = useState<number | null>(null)
-  const [isLoadingStats, setIsLoadingStats] = useState(true)
+  const segment = useSelectedLayoutSegment();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [_isFullscreen, setIsFullscreen] = useState(false);
+  const [pageViews, setPageViews] = useState<number | null>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
+      setIsFullscreen(!!document.fullscreenElement);
+    };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [])
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () =>
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   // Fetch total pageviews from our API endpoint
   useEffect(() => {
     const fetchPageViews = async () => {
       try {
-        setIsLoadingStats(true)
+        setIsLoadingStats(true);
 
         // Fetch from our server API
-        const response = await fetch('/api/umami', { cache: 'no-store' })
-        const data = await response.json()
+        const response = await fetch('/api/umami', { cache: 'no-store' });
+        const data = await response.json();
 
-        console.log('Navbar received data:', data)
+        console.log('Navbar received data:', data);
 
         // Check if we got a valid pageviews value (including 0)
-        if (data.pageviews?.value !== null && data.pageviews?.value !== undefined) {
+        if (
+          data.pageviews?.value !== null &&
+          data.pageviews?.value !== undefined
+        ) {
           // Always convert to number, even if it's 0
-          const viewsValue = Number(data.pageviews.value)
+          const viewsValue = Number(data.pageviews.value);
           // Ensure we're not setting NaN as the value
-          setPageViews(isNaN(viewsValue) ? 0 : viewsValue)
+          setPageViews(isNaN(viewsValue) ? 0 : viewsValue);
         } else {
-          setPageViews(0) // Default to 0 instead of null
+          setPageViews(0); // Default to 0 instead of null
         }
       } catch (error) {
-        console.error('Error fetching pageviews:', error)
-        setPageViews(0) // Default to 0 instead of null
+        console.error('Error fetching pageviews:', error);
+        setPageViews(0); // Default to 0 instead of null
       } finally {
-        setIsLoadingStats(false)
+        setIsLoadingStats(false);
       }
-    }
+    };
 
-    fetchPageViews()
-  }, [])
+    fetchPageViews();
+  }, []);
 
   // Construct the Umami share URL using the environment variables
   // Make sure to use just the token without the domain part
-  const shareToken = ENV.UMAMI_SHARE_TOKEN ? ENV.UMAMI_SHARE_TOKEN.split('/')[0] : 'Oy2rnXyE1fyQlY4u'
-  const umamiShareUrl = `${ENV.UMAMI_URL || 'https://cloud.umami.is'}/share/${shareToken}`
+  const shareToken = ENV.UMAMI_SHARE_TOKEN
+    ? ENV.UMAMI_SHARE_TOKEN.split('/')[0]
+    : 'Oy2rnXyE1fyQlY4u';
+  const umamiShareUrl = `${ENV.UMAMI_URL || 'https://cloud.umami.is'}/share/${shareToken}`;
 
   return (
-    <nav className={`select-none overflow-x-auto text-sm md:text-base lg:px-4 lg:py-3 border-t border-[#444444]/30 bg-[#121212]`}>
-      <div className='items-center justify-between gap-2 px-2 lg:px-0 hidden lg:flex'>
-        <div className='flex items-center gap-2'>
-          <div className='h-4 w-1.5 bg-[#969696]' />
-          <a className='flex items-center' href='https://github.com/BenyD' target='_blank' rel='norreferrer'>
+    <nav
+      className={`select-none overflow-x-auto border-t border-[#444444]/30 bg-[#121212] text-sm md:text-base lg:px-4 lg:py-3`}
+    >
+      <div className="hidden items-center justify-between gap-2 px-2 lg:flex lg:px-0">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-1.5 bg-[#969696]" />
+          <a
+            className="flex items-center"
+            href="https://github.com/BenyD"
+            target="_blank"
+            rel="norreferrer"
+          >
             <svg
-              className='mr-1 h-3 w-3'
-              xmlns='http://www.w3.org/2000/svg'
-              width='24'
-              height='24'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
+              className="mr-1 h-3 w-3"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <line x1='6' x2='6' y1='3' y2='15' />
-              <circle cx='18' cy='6' r='3' />
-              <circle cx='6' cy='18' r='3' />
-              <path d='M18 9a9 9 0 0 1-9 9' />
+              <line x1="6" x2="6" y1="3" y2="15" />
+              <circle cx="18" cy="6" r="3" />
+              <circle cx="6" cy="18" r="3" />
+              <path d="M18 9a9 9 0 0 1-9 9" />
             </svg>
             main
           </a>
         </div>
-        <div className='flex items-center gap-x-2 not-sr-only'>
+        <div className="not-sr-only flex items-center gap-x-2">
           <SpotifyNowPlaying />
-          <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-2'>
+          <a
+            href={umamiShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
+          >
             {isLoadingStats ? (
-              <span className='text-[#969696] text-xs'>-- ... --</span>
+              <span className="text-xs text-[#969696]">-- ... --</span>
             ) : (
-              <span className='text-[#969696] text-xs'>-- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS --</span>
+              <span className="text-xs text-[#969696]">
+                -- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS
+                --
+              </span>
             )}
           </a>
         </div>
       </div>
 
       {/* Desktop Menu */}
-      <div className='hidden md:flex items-center justify-between gap-20 overflow-x-auto px-2 py-3 leading-none lg:px-0 lg:py-0'>
-        <ul className='flex items-center'>
-          <li className='mr-1 bg-[#969696] px-2 py-0.5 leading-none text-black not-sr-only'>tmux</li>
-          {menu.map(item => {
-            const isActived = segment === item.href.split('/')[1] || (segment === null && item.href === '/')
+      <div className="hidden items-center justify-between gap-20 overflow-x-auto px-2 py-3 leading-none md:flex lg:px-0 lg:py-0">
+        <ul className="flex items-center">
+          <li className="not-sr-only mr-1 bg-[#969696] px-2 py-0.5 leading-none text-black">
+            tmux
+          </li>
+          {menu.map((item) => {
+            const isActived =
+              segment === item.href.split('/')[1] ||
+              (segment === null && item.href === '/');
             return (
-              <li key={item.title} className='shrink-0'>
+              <li key={item.title} className="shrink-0">
                 {item.href.startsWith('http') ? (
                   <a
                     href={item.href}
-                    target='_blank'
-                    rel='noreferrer'
+                    target="_blank"
+                    rel="noreferrer"
                     className={`flex items-center gap-1.5 px-2 py-0.5 leading-none transition-all ${isActived && 'bg-[#969696] text-black'}`}
                   >
                     {item.title}
                   </a>
                 ) : (
-                  <Link href={item.href} className={`flex items-center gap-1.5 px-2 py-0.5 leading-none transition-all ${isActived && 'bg-[#969696] text-black'}`}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-1.5 px-2 py-0.5 leading-none transition-all ${isActived && 'bg-[#969696] text-black'}`}
+                  >
                     {item.title}
                   </Link>
                 )}
               </li>
-            )
+            );
           })}
         </ul>
-        <div className='lg:flex hidden items-center gap-2 not-sr-only'>
-          <p className='shrink-0 bg-[#969696] px-2 py-0.5 leading-none text-black'>Macbook-Pro-M4</p>
+        <div className="not-sr-only hidden items-center gap-2 lg:flex">
+          <p className="shrink-0 bg-[#969696] px-2 py-0.5 leading-none text-black">
+            Macbook-Pro-M4
+          </p>
         </div>
       </div>
 
       {/* Mobile Menu Toggle Button */}
-      <div className='md:hidden flex items-center justify-between px-4 py-3'>
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className='flex items-center gap-2' aria-label='Toggle mobile menu'>
-          <div className={`w-5 h-0.5 bg-[#969696] transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-[3px]' : ''}`}></div>
-          <div className={`w-5 h-0.5 bg-[#969696] transition-all ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}></div>
-          <div className={`w-5 h-0.5 bg-[#969696] transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-[3px]' : ''}`}></div>
-          <span className='text-[#969696] ml-2'>menu</span>
+      <div className="flex items-center justify-between px-4 py-3 md:hidden">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="flex items-center gap-2"
+          aria-label="Toggle mobile menu"
+        >
+          <div
+            className={`h-0.5 w-5 bg-[#969696] transition-all ${mobileMenuOpen ? 'translate-y-[3px] rotate-45' : ''}`}
+          ></div>
+          <div
+            className={`h-0.5 w-5 bg-[#969696] transition-all ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}
+          ></div>
+          <div
+            className={`h-0.5 w-5 bg-[#969696] transition-all ${mobileMenuOpen ? '-translate-y-[3px] -rotate-45' : ''}`}
+          ></div>
+          <span className="ml-2 text-[#969696]">menu</span>
         </button>
-        <div className='flex items-center gap-2'>
-          <a href={umamiShareUrl} target='_blank' rel='noopener noreferrer' className='text-[#969696] flex items-center gap-1'>
-            {isLoadingStats ? <span className='text-xs'>-- ... --</span> : <span className='text-xs'>-- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS --</span>}
+        <div className="flex items-center gap-2">
+          <a
+            href={umamiShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-[#969696]"
+          >
+            {isLoadingStats ? (
+              <span className="text-xs">-- ... --</span>
+            ) : (
+              <span className="text-xs">
+                -- {pageViews !== null ? pageViews.toLocaleString() : 0} VIEWS
+                --
+              </span>
+            )}
           </a>
-          <p className='text-[#969696]'>~ beny.one</p>
+          <p className="text-[#969696]">~ beny.one</p>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className={`md:hidden px-2 py-3 rounded-md mx-2 mb-3 shadow-lg border border-[#444444]/30 animate-fadeIn bg-[#121212]`}>
-          <ul className='flex flex-col space-y-2'>
-            {menu.map(item => {
-              const isActived = segment === item.href.split('/')[1] || (segment === null && item.href === '/')
+        <div
+          className={`mx-2 mb-3 animate-fadeIn rounded-md border border-[#444444]/30 bg-[#121212] px-2 py-3 shadow-lg md:hidden`}
+        >
+          <ul className="flex flex-col space-y-2">
+            {menu.map((item) => {
+              const isActived =
+                segment === item.href.split('/')[1] ||
+                (segment === null && item.href === '/');
               return (
-                <li key={item.title} className='w-full'>
+                <li key={item.title} className="w-full">
                   {item.href.startsWith('http') ? (
                     <a
                       href={item.href}
-                      target='_blank'
-                      rel='noreferrer'
-                      className={`block w-full px-4 py-2.5 rounded-md transition-all ${
-                        isActived ? 'bg-[#969696] text-black' : 'hover:bg-[#1a1a1a]/50 active:bg-[#242424]/70'
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`block w-full rounded-md px-4 py-2.5 transition-all ${
+                        isActived
+                          ? 'bg-[#969696] text-black'
+                          : 'hover:bg-[#1a1a1a]/50 active:bg-[#242424]/70'
                       } flex items-center`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <span className='w-1.5 h-1.5 rounded-full mr-2 bg-[#969696] opacity-70'></span>
+                      <span className="mr-2 h-1.5 w-1.5 rounded-full bg-[#969696] opacity-70"></span>
                       {item.title}
                     </a>
                   ) : (
                     <Link
                       href={item.href}
-                      className={`block w-full px-4 py-2.5 rounded-md transition-all ${
-                        isActived ? 'bg-[#969696] text-black' : 'hover:bg-[#1a1a1a]/50 active:bg-[#242424]/70'
+                      className={`block w-full rounded-md px-4 py-2.5 transition-all ${
+                        isActived
+                          ? 'bg-[#969696] text-black'
+                          : 'hover:bg-[#1a1a1a]/50 active:bg-[#242424]/70'
                       } flex items-center`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <span className='w-1.5 h-1.5 rounded-full mr-2 bg-[#969696] opacity-70'></span>
+                      <span className="mr-2 h-1.5 w-1.5 rounded-full bg-[#969696] opacity-70"></span>
                       {item.title}
                     </Link>
                   )}
                 </li>
-              )
+              );
             })}
           </ul>
         </div>
       )}
     </nav>
-  )
-}
+  );
+};
 
 const menu = [
   {
     title: 'home',
-    href: '/'
+    href: '/',
   },
   {
     title: 'abouts',
-    href: '/abouts/personal'
+    href: '/abouts/personal',
   },
   {
     title: 'stats',
-    href: '/stats'
+    href: '/stats',
   },
   {
     title: 'terminal',
-    href: '/terminal'
+    href: '/terminal',
   },
   {
     title: 'assets',
-    href: '/assets'
-  }
-]
+    href: '/assets',
+  },
+];

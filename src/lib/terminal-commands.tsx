@@ -1,288 +1,356 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { CommandOutput, TerminalTheme, TerminalShell, FileSystemItem } from './terminal-context'
-import * as asciiArt from './ascii-art'
+import React from 'react';
+import {
+  CommandOutput,
+  TerminalTheme,
+  TerminalShell,
+  FileSystemItem,
+} from './terminal-context';
+import * as asciiArt from './ascii-art';
 
 // Command handler type
-export type CommandHandler = (args: string[], terminalState: any) => CommandOutput | Promise<CommandOutput>
+export type CommandHandler = (
+  args: string[],
+  terminalState: any
+) => CommandOutput | Promise<CommandOutput>;
 
 // Helper function to display directory contents
-const formatDirectoryListing = (items: FileSystemItem[] | undefined): React.ReactNode => {
+const formatDirectoryListing = (
+  items: FileSystemItem[] | undefined
+): React.ReactNode => {
   if (!items || items.length === 0) {
-    return <div>No files found.</div>
+    return <div>No files found.</div>;
   }
 
   return (
-    <div className='directory-listing grid grid-cols-1 md:grid-cols-2 gap-x-4'>
+    <div className="directory-listing grid grid-cols-1 gap-x-4 md:grid-cols-2">
       {items.map((item, idx) => (
-        <div key={idx} className='flex'>
-          <span className={`mr-2 ${item.type === 'directory' ? 'text-blue-400' : item.type === 'link' ? 'text-cyan-400' : 'text-gray-300'}`}>
-            {item.type === 'directory' ? 'dir' : item.type === 'link' ? 'lnk' : 'file'}
+        <div key={idx} className="flex">
+          <span
+            className={`mr-2 ${item.type === 'directory' ? 'text-blue-400' : item.type === 'link' ? 'text-cyan-400' : 'text-gray-300'}`}
+          >
+            {item.type === 'directory'
+              ? 'dir'
+              : item.type === 'link'
+                ? 'lnk'
+                : 'file'}
           </span>
-          <span className={`${item.type === 'directory' ? 'text-blue-400' : item.type === 'link' ? 'text-cyan-400' : 'text-gray-300'}`}>{item.name}</span>
+          <span
+            className={`${item.type === 'directory' ? 'text-blue-400' : item.type === 'link' ? 'text-cyan-400' : 'text-gray-300'}`}
+          >
+            {item.name}
+          </span>
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 // Command definitions
 const commands: Record<string, CommandHandler> = {
   // Navigation and file system commands
   ls: (args, { findCurrentDirectory }) => {
-    const dir = findCurrentDirectory()
+    const dir = findCurrentDirectory();
     if (!dir) {
-      return { content: 'Error: Directory not found', isError: true }
+      return { content: 'Error: Directory not found', isError: true };
     }
 
-    let path = args[0]
-    let targetDir = dir
+    let path = args[0];
+    let targetDir = dir;
 
     if (path) {
-      const target = findCurrentDirectory().children?.find((item: FileSystemItem) => item.name === path && item.type === 'directory')
+      const target = findCurrentDirectory().children?.find(
+        (item: FileSystemItem) =>
+          item.name === path && item.type === 'directory'
+      );
 
       if (!target) {
-        return { content: `ls: cannot access '${path}': No such directory`, isError: true }
+        return {
+          content: `ls: cannot access '${path}': No such directory`,
+          isError: true,
+        };
       }
 
-      targetDir = target
+      targetDir = target;
     }
 
     return {
       content: formatDirectoryListing(targetDir.children),
-      isHTML: true
-    }
+      isHTML: true,
+    };
   },
 
   cd: (args, { navigateFileSystem }) => {
-    const path = args[0] || ''
-    navigateFileSystem(path)
-    return { content: null }
+    const path = args[0] || '';
+    navigateFileSystem(path);
+    return { content: null };
   },
 
-  pwd: (args, { terminal }) => {
-    return { content: `/${terminal.currentDirectory.join('/')}` }
+  pwd: (_args, { terminal }) => {
+    return { content: `/${terminal.currentDirectory.join('/')}` };
   },
 
-  cat: (args, { readFile, findCurrentDirectory }) => {
+  cat: (args, { readFile, findCurrentDirectory: _findCurrentDirectory }) => {
     if (!args[0]) {
-      return { content: 'cat: missing file operand', isError: true }
+      return { content: 'cat: missing file operand', isError: true };
     }
 
-    const content = readFile(args[0])
+    const content = readFile(args[0]);
     if (content === null) {
-      return { content: `cat: ${args[0]}: No such file or directory`, isError: true }
+      return {
+        content: `cat: ${args[0]}: No such file or directory`,
+        isError: true,
+      };
     }
 
     // Format based on file extension
     if (args[0].endsWith('.md')) {
       return {
-        content: <div className='markdown-content whitespace-pre-wrap'>{content}</div>,
-        isHTML: true
-      }
+        content: (
+          <div className="markdown-content whitespace-pre-wrap">{content}</div>
+        ),
+        isHTML: true,
+      };
     }
 
-    return { content }
+    return { content };
   },
 
   // Terminal customization commands
   theme: (args, { changeTheme }) => {
-    const availableThemes: TerminalTheme[] = ['default', 'monokai', 'dracula', 'solarized', 'nord']
-    const theme = args[0]?.toLowerCase() as TerminalTheme
+    const availableThemes: TerminalTheme[] = [
+      'default',
+      'monokai',
+      'dracula',
+      'solarized',
+      'nord',
+    ];
+    const theme = args[0]?.toLowerCase() as TerminalTheme;
 
     if (!theme) {
       return {
-        content: `Available themes: ${availableThemes.join(', ')}`
-      }
+        content: `Available themes: ${availableThemes.join(', ')}`,
+      };
     }
 
     if (!availableThemes.includes(theme)) {
       return {
         content: `Theme '${theme}' not found. Available themes: ${availableThemes.join(', ')}`,
-        isError: true
-      }
+        isError: true,
+      };
     }
 
-    changeTheme(theme)
-    return { content: `Theme changed to '${theme}'` }
+    changeTheme(theme);
+    return { content: `Theme changed to '${theme}'` };
   },
 
   shell: (args, { changeShell }) => {
-    const availableShells: TerminalShell[] = ['bash', 'zsh', 'fish', 'powershell']
-    const shell = args[0]?.toLowerCase() as TerminalShell
+    const availableShells: TerminalShell[] = [
+      'bash',
+      'zsh',
+      'fish',
+      'powershell',
+    ];
+    const shell = args[0]?.toLowerCase() as TerminalShell;
 
     if (!shell) {
       return {
-        content: `Available shells: ${availableShells.join(', ')}`
-      }
+        content: `Available shells: ${availableShells.join(', ')}`,
+      };
     }
 
     if (!availableShells.includes(shell)) {
       return {
         content: `Shell '${shell}' not found. Available shells: ${availableShells.join(', ')}`,
-        isError: true
-      }
+        isError: true,
+      };
     }
 
-    changeShell(shell)
-    return { content: `Shell changed to '${shell}'` }
+    changeShell(shell);
+    return { content: `Shell changed to '${shell}'` };
   },
 
   fontsize: (args, { changeFontSize }) => {
-    const size = parseInt(args[0])
+    const size = parseInt(args[0]);
 
     if (isNaN(size) || size < 10 || size > 24) {
       return {
         content: 'Please provide a font size between 10 and 24',
-        isError: true
-      }
+        isError: true,
+      };
     }
 
-    changeFontSize(size)
-    return { content: `Font size changed to ${size}px` }
+    changeFontSize(size);
+    return { content: `Font size changed to ${size}px` };
   },
 
   opacity: (args, { changeOpacity }) => {
-    const opacity = parseFloat(args[0])
+    const opacity = parseFloat(args[0]);
 
     if (isNaN(opacity) || opacity < 0.1 || opacity > 1) {
       return {
         content: 'Please provide an opacity value between 0.1 and 1.0',
-        isError: true
-      }
+        isError: true,
+      };
     }
 
-    changeOpacity(opacity)
-    return { content: `Opacity changed to ${opacity}` }
+    changeOpacity(opacity);
+    return { content: `Opacity changed to ${opacity}` };
   },
 
   // System commands
-  clear: (args, { clearTerminal }) => {
-    clearTerminal()
-    return { content: '' }
+  clear: (_args, { clearTerminal }) => {
+    clearTerminal();
+    return { content: '' };
   },
 
   history: (args, { terminal }) => {
     if (terminal.history.length === 0) {
-      return { content: 'No commands in history.' }
+      return { content: 'No commands in history.' };
     }
 
     return {
       content: (
-        <div className='history-list'>
+        <div className="history-list">
           {terminal.history.map((cmd: string, idx: number) => (
             <div key={idx}>
-              <span className='text-gray-500 mr-2'>{idx + 1}</span>
+              <span className="mr-2 text-gray-500">{idx + 1}</span>
               <span>{cmd}</span>
             </div>
           ))}
         </div>
       ),
-      isHTML: true
-    }
+      isHTML: true,
+    };
   },
 
-  uptime: (args, { terminal }) => {
-    const uptime = terminal.uptime
-    const hours = Math.floor(uptime / 3600)
-    const minutes = Math.floor((uptime % 3600) / 60)
-    const seconds = uptime % 60
+  uptime: (_args, { terminal }) => {
+    const uptime = terminal.uptime;
+    const hours = Math.floor(uptime / 3600);
+    const minutes = Math.floor((uptime % 3600) / 60);
+    const seconds = uptime % 60;
 
-    const uptimeString = [hours ? `${hours}h` : '', minutes ? `${minutes}m` : '', `${seconds}s`].filter(Boolean).join(' ')
+    const uptimeString = [
+      hours ? `${hours}h` : '',
+      minutes ? `${minutes}m` : '',
+      `${seconds}s`,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-    return { content: `Uptime: ${uptimeString}` }
+    return { content: `Uptime: ${uptimeString}` };
   },
 
-  sys: (args, { terminal }) => {
-    const { systemStats } = terminal
+  sys: (_args, { terminal }) => {
+    const { systemStats } = terminal;
 
     return {
       content: (
-        <div className='system-stats space-y-2'>
-          <div className='text-green-400 font-bold'>System Statistics:</div>
-          <div className='flex items-center'>
-            <span className='w-24'>CPU Usage:</span>
-            <div className='w-48 h-3 bg-gray-800 rounded-full overflow-hidden'>
-              <div className='h-full bg-green-500 rounded-full' style={{ width: `${systemStats.cpu}%` }}></div>
+        <div className="system-stats space-y-2">
+          <div className="font-bold text-green-400">System Statistics:</div>
+          <div className="flex items-center">
+            <span className="w-24">CPU Usage:</span>
+            <div className="h-3 w-48 overflow-hidden rounded-full bg-gray-800">
+              <div
+                className="h-full rounded-full bg-green-500"
+                style={{ width: `${systemStats.cpu}%` }}
+              ></div>
             </div>
-            <span className='ml-2'>{Math.round(systemStats.cpu)}%</span>
+            <span className="ml-2">{Math.round(systemStats.cpu)}%</span>
           </div>
-          <div className='flex items-center'>
-            <span className='w-24'>Memory:</span>
-            <div className='w-48 h-3 bg-gray-800 rounded-full overflow-hidden'>
-              <div className='h-full bg-blue-500 rounded-full' style={{ width: `${systemStats.memory}%` }}></div>
+          <div className="flex items-center">
+            <span className="w-24">Memory:</span>
+            <div className="h-3 w-48 overflow-hidden rounded-full bg-gray-800">
+              <div
+                className="h-full rounded-full bg-blue-500"
+                style={{ width: `${systemStats.memory}%` }}
+              ></div>
             </div>
-            <span className='ml-2'>{Math.round(systemStats.memory)}%</span>
+            <span className="ml-2">{Math.round(systemStats.memory)}%</span>
           </div>
-          <div className='flex items-center'>
-            <span className='w-24'>Network:</span>
-            <div className='w-48 h-3 bg-gray-800 rounded-full overflow-hidden'>
-              <div className='h-full bg-purple-500 rounded-full' style={{ width: `${systemStats.network}%` }}></div>
+          <div className="flex items-center">
+            <span className="w-24">Network:</span>
+            <div className="h-3 w-48 overflow-hidden rounded-full bg-gray-800">
+              <div
+                className="h-full rounded-full bg-purple-500"
+                style={{ width: `${systemStats.network}%` }}
+              ></div>
             </div>
-            <span className='ml-2'>{Math.round(systemStats.network)} KB/s</span>
+            <span className="ml-2">{Math.round(systemStats.network)} KB/s</span>
           </div>
-          <div className='text-xs text-gray-400 mt-2'>
-            Terminal running for {Math.floor(terminal.uptime / 60)}m {terminal.uptime % 60}s
+          <div className="mt-2 text-xs text-gray-400">
+            Terminal running for {Math.floor(terminal.uptime / 60)}m{' '}
+            {terminal.uptime % 60}s
           </div>
         </div>
       ),
-      isHTML: true
-    }
+      isHTML: true,
+    };
   },
 
   // Terminal management
   'new-term': (args, { createTerminal }) => {
-    const id = createTerminal(args[0] || `term-${Date.now().toString(36).slice(-4)}`)
-    return { content: `New terminal created with ID: ${id}` }
+    const id = createTerminal(
+      args[0] || `term-${Date.now().toString(36).slice(-4)}`
+    );
+    return { content: `New terminal created with ID: ${id}` };
   },
 
   // Game commands
-  games: (args, {}) => {
+  games: (_args, {}) => {
     return {
       content: (
-        <div className='games-list space-y-2'>
-          <div className='text-green-400 font-bold'>Available Games:</div>
+        <div className="games-list space-y-2">
+          <div className="font-bold text-green-400">Available Games:</div>
           <div>
-            <span className='text-yellow-300'>hangman</span> - Guess the word letter by letter
+            <span className="text-yellow-300">hangman</span> - Guess the word
+            letter by letter
           </div>
           <div>
-            <span className='text-yellow-300'>tictactoe</span> - Play Tic-tac-toe against the computer
+            <span className="text-yellow-300">tictactoe</span> - Play
+            Tic-tac-toe against the computer
           </div>
           <div>
-            <span className='text-yellow-300'>matrix</span> - Display Matrix code rain effect
+            <span className="text-yellow-300">matrix</span> - Display Matrix
+            code rain effect
           </div>
-          <div className='text-gray-400 mt-2'>Type the game name to start playing!</div>
+          <div className="mt-2 text-gray-400">
+            Type the game name to start playing!
+          </div>
         </div>
       ),
-      isHTML: true
-    }
+      isHTML: true,
+    };
   },
 
   // Weather command
   weather: async (args, {}) => {
     if (!args[0]) {
       return {
-        content: 'Usage: weather [location] - Please specify a location (e.g., weather London)',
-        isError: true
-      }
+        content:
+          'Usage: weather [location] - Please specify a location (e.g., weather London)',
+        isError: true,
+      };
     }
 
-    const location = args.join(' ')
+    const location = args.join(' ');
 
     try {
       // Call our weather API endpoint
-      const response = await fetch(`/api/weather?location=${encodeURIComponent(location)}`)
-      const data = await response.json()
+      const response = await fetch(
+        `/api/weather?location=${encodeURIComponent(location)}`
+      );
+      const data = await response.json();
 
       if (data.error && !data.weather) {
         return {
           content: `Error: ${data.error}`,
-          isError: true
-        }
+          isError: true,
+        };
       }
 
-      const { weather } = data
+      const { weather } = data;
 
       // Weather display with icon (if available)
       const getWeatherEmoji = (condition: string) => {
@@ -301,260 +369,309 @@ const commands: Record<string, CommandHandler> = {
           Sand: '🌫️',
           Ash: '🌫️',
           Squall: '💨',
-          Tornado: '🌪️'
-        }
+          Tornado: '🌪️',
+        };
 
-        return conditionMap[condition] || '🌡️'
-      }
+        return conditionMap[condition] || '🌡️';
+      };
 
       return {
         content: (
-          <div className='weather-display space-y-2'>
-            <div className='text-green-400 font-bold'>
+          <div className="weather-display space-y-2">
+            <div className="font-bold text-green-400">
               Weather for {weather.location}
               {weather.country ? `, ${weather.country}` : ''}
             </div>
 
-            <div className='flex items-center gap-2'>
-              <span className='text-2xl'>{getWeatherEmoji(weather.condition)}</span>
-              <span className='text-xl'>{weather.temperature}°C</span>
-              <span className='text-gray-300'>({weather.description})</span>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">
+                {getWeatherEmoji(weather.condition)}
+              </span>
+              <span className="text-xl">{weather.temperature}°C</span>
+              <span className="text-gray-300">({weather.description})</span>
             </div>
 
-            <div className='grid grid-cols-2 gap-x-4'>
+            <div className="grid grid-cols-2 gap-x-4">
               <div>
-                <span className='text-gray-400'>Humidity: </span>
+                <span className="text-gray-400">Humidity: </span>
                 <span>{weather.humidity}%</span>
               </div>
               <div>
-                <span className='text-gray-400'>Wind: </span>
+                <span className="text-gray-400">Wind: </span>
                 <span>{weather.wind} m/s</span>
               </div>
             </div>
 
-            <div className='text-xs text-gray-400 mt-2'>Weather data powered by OpenWeatherMap</div>
+            <div className="mt-2 text-xs text-gray-400">
+              Weather data powered by OpenWeatherMap
+            </div>
           </div>
         ),
-        isHTML: true
-      }
+        isHTML: true,
+      };
     } catch (error) {
-      console.error('Weather fetch error:', error)
+      console.error('Weather fetch error:', error);
       return {
         content: 'Failed to fetch weather data. Please try again later.',
-        isError: true
-      }
+        isError: true,
+      };
     }
   },
 
-  hangman: (args, { updateGameState }) => {
-    updateGameState('hangman')
-    return { content: 'Starting Hangman game...' }
+  hangman: (_args, { updateGameState }) => {
+    updateGameState('hangman');
+    return { content: 'Starting Hangman game...' };
   },
 
-  tictactoe: (args, { updateGameState }) => {
-    updateGameState('tictactoe')
-    return { content: 'Starting Tic-tac-toe game...' }
+  tictactoe: (_args, { updateGameState }) => {
+    updateGameState('tictactoe');
+    return { content: 'Starting Tic-tac-toe game...' };
   },
 
-  matrix: (args, { updateGameState }) => {
-    updateGameState('matrix')
-    return { content: 'Entering the Matrix...' }
+  matrix: (_args, { updateGameState }) => {
+    updateGameState('matrix');
+    return { content: 'Entering the Matrix...' };
   },
 
   // Help command
-  help: (args, {}) => {
+  help: (_args, {}) => {
     return {
       content: (
-        <div className='space-y-1'>
-          <div className='font-bold text-green-400'>Available Commands:</div>
+        <div className="space-y-1">
+          <div className="font-bold text-green-400">Available Commands:</div>
           <div>
-            <span className='text-yellow-300'>help</span> - Show this help message
+            <span className="text-yellow-300">help</span> - Show this help
+            message
           </div>
           <div>
-            <span className='text-yellow-300'>clear</span> - Clear the terminal
+            <span className="text-yellow-300">clear</span> - Clear the terminal
           </div>
           <div>
-            <span className='text-yellow-300'>ls</span> - List directory contents
+            <span className="text-yellow-300">ls</span> - List directory
+            contents
           </div>
           <div>
-            <span className='text-yellow-300'>cd [directory]</span> - Change directory
+            <span className="text-yellow-300">cd [directory]</span> - Change
+            directory
           </div>
           <div>
-            <span className='text-yellow-300'>cat [file]</span> - Display file contents
+            <span className="text-yellow-300">cat [file]</span> - Display file
+            contents
           </div>
           <div>
-            <span className='text-yellow-300'>pwd</span> - Print current directory
+            <span className="text-yellow-300">pwd</span> - Print current
+            directory
           </div>
           <div>
-            <span className='text-yellow-300'>theme [name]</span> - Change terminal theme (default, monokai, dracula, solarized, nord)
+            <span className="text-yellow-300">theme [name]</span> - Change
+            terminal theme (default, monokai, dracula, solarized, nord)
           </div>
           <div>
-            <span className='text-yellow-300'>shell [type]</span> - Change shell style (bash, zsh, fish, powershell)
+            <span className="text-yellow-300">shell [type]</span> - Change shell
+            style (bash, zsh, fish, powershell)
           </div>
           <div>
-            <span className='text-yellow-300'>fontsize [size]</span> - Change font size (10-24)
+            <span className="text-yellow-300">fontsize [size]</span> - Change
+            font size (10-24)
           </div>
           <div>
-            <span className='text-yellow-300'>opacity [value]</span> - Change terminal opacity (0.1-1.0)
+            <span className="text-yellow-300">opacity [value]</span> - Change
+            terminal opacity (0.1-1.0)
           </div>
           <div>
-            <span className='text-yellow-300'>about</span> - Display information about me
+            <span className="text-yellow-300">about</span> - Display information
+            about me
           </div>
           <div>
-            <span className='text-yellow-300'>skills</span> - View my skills
+            <span className="text-yellow-300">skills</span> - View my skills
           </div>
           <div>
-            <span className='text-yellow-300'>contact</span> - View contact information
+            <span className="text-yellow-300">contact</span> - View contact
+            information
           </div>
           <div>
-            <span className='text-yellow-300'>neofetch</span> - Display system information
+            <span className="text-yellow-300">neofetch</span> - Display system
+            information
           </div>
           <div>
-            <span className='text-yellow-300'>cowsay [message]</span> - Have a cow say your message
+            <span className="text-yellow-300">cowsay [message]</span> - Have a
+            cow say your message
           </div>
           <div>
-            <span className='text-yellow-300'>matrix</span> - Display Matrix-like animation
+            <span className="text-yellow-300">matrix</span> - Display
+            Matrix-like animation
           </div>
           <div>
-            <span className='text-yellow-300'>sys</span> - Show system statistics
+            <span className="text-yellow-300">sys</span> - Show system
+            statistics
           </div>
           <div>
-            <span className='text-yellow-300'>uptime</span> - Show system uptime
+            <span className="text-yellow-300">uptime</span> - Show system uptime
           </div>
           <div>
-            <span className='text-yellow-300'>history</span> - Show command history
+            <span className="text-yellow-300">history</span> - Show command
+            history
           </div>
           <div>
-            <span className='text-yellow-300'>games</span> - List available games
+            <span className="text-yellow-300">games</span> - List available
+            games
           </div>
           <div>
-            <span className='text-yellow-300'>weather [location]</span> - Show weather for location
+            <span className="text-yellow-300">weather [location]</span> - Show
+            weather for location
           </div>
           <div>
-            <span className='text-yellow-300'>new-term</span> - Open a new terminal
+            <span className="text-yellow-300">new-term</span> - Open a new
+            terminal
           </div>
-          <div className='mt-2 text-blue-300'>
-            Press <span className='font-bold'>Tab</span> for auto-completion, <span className='font-bold'>Ctrl+L</span> to clear screen, use <span className='font-bold'>↑/↓</span>{' '}
-            keys for history.
+          <div className="mt-2 text-blue-300">
+            Press <span className="font-bold">Tab</span> for auto-completion,{' '}
+            <span className="font-bold">Ctrl+L</span> to clear screen, use{' '}
+            <span className="font-bold">↑/↓</span> keys for history.
           </div>
         </div>
       ),
-      isHTML: true
-    }
-  }
-}
+      isHTML: true,
+    };
+  },
+};
 
 // Add fantasy commands
 commands.neofetch = (args, { terminal }) => {
-  const os = 'BenyOS'
-  const kernel = 'BKernel 6.4.0'
-  const uptime = `${Math.floor(terminal.uptime / 60)}m ${terminal.uptime % 60}s`
-  const shell = terminal.shell
-  const resolution = '1920x1080'
-  const wm = 'TermWM'
-  const theme = terminal.theme
+  const os = 'BenyOS';
+  const kernel = 'BKernel 6.4.0';
+  const uptime = `${Math.floor(terminal.uptime / 60)}m ${terminal.uptime % 60}s`;
+  const shell = terminal.shell;
+  const resolution = '1920x1080';
+  const wm = 'TermWM';
+  const theme = terminal.theme;
 
   return {
     content: (
-      <div className='neofetch flex gap-4'>
-        <pre className='text-blue-400'>{asciiArt.logo}</pre>
-        <div className='neofetch-info'>
+      <div className="neofetch flex gap-4">
+        <pre className="text-blue-400">{asciiArt.logo}</pre>
+        <div className="neofetch-info">
           <div>
-            <span className='text-blue-400 font-bold'>OS:</span> {os}
+            <span className="font-bold text-blue-400">OS:</span> {os}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>Kernel:</span> {kernel}
+            <span className="font-bold text-blue-400">Kernel:</span> {kernel}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>Uptime:</span> {uptime}
+            <span className="font-bold text-blue-400">Uptime:</span> {uptime}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>Shell:</span> {shell}
+            <span className="font-bold text-blue-400">Shell:</span> {shell}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>Resolution:</span> {resolution}
+            <span className="font-bold text-blue-400">Resolution:</span>{' '}
+            {resolution}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>WM:</span> {wm}
+            <span className="font-bold text-blue-400">WM:</span> {wm}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>Theme:</span> {theme}
+            <span className="font-bold text-blue-400">Theme:</span> {theme}
           </div>
           <div>
-            <span className='text-blue-400 font-bold'>Terminal:</span> Beny Terminal 1.0
+            <span className="font-bold text-blue-400">Terminal:</span> Beny
+            Terminal 1.0
           </div>
         </div>
       </div>
     ),
-    isHTML: true
-  }
-}
+    isHTML: true,
+  };
+};
 
 commands.cowsay = (args, {}) => {
-  const message = args.join(' ') || 'Moo!'
-  const cowOutput = asciiArt.cowTemplate(message)
+  const message = args.join(' ') || 'Moo!';
+  const cowOutput = asciiArt.cowTemplate(message);
 
-  return { content: cowOutput }
-}
+  return { content: cowOutput };
+};
 
 // Portfolio-specific commands
-commands.about = (args, {}) => {
+commands.about = (_args, {}) => {
   return {
     content: (
-      <div className='about space-y-4'>
-        <div className='text-green-400 font-bold text-lg'>About Beny</div>
-        <div className='space-y-2'>
+      <div className="about space-y-4">
+        <div className="text-lg font-bold text-green-400">About Beny</div>
+        <div className="space-y-2">
           <p>Self taught software engineer based in Chennai, India.</p>
-          <p>Love to learn new things and I'm always looking for new challenges to solve.</p>
+          <p>
+            Love to learn new things and I'm always looking for new challenges
+            to solve.
+          </p>
         </div>
-        <div className='text-gray-400 text-sm mt-4'>Type 'skills' to see my technical skills.</div>
+        <div className="mt-4 text-sm text-gray-400">
+          Type 'skills' to see my technical skills.
+        </div>
       </div>
     ),
-    isHTML: true
-  }
-}
+    isHTML: true,
+  };
+};
 
-commands.skills = (args, {}) => {
+commands.skills = (_args, {}) => {
   const skills = {
-    frontend: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'HTML/CSS'],
+    frontend: [
+      'JavaScript',
+      'TypeScript',
+      'React',
+      'Next.js',
+      'Tailwind CSS',
+      'HTML/CSS',
+    ],
     backend: ['Node.js', 'Express', 'RESTful APIs', 'Databases'],
-    tools: ['Git', 'VS Code', 'Terminal', 'Figma']
-  }
+    tools: ['Git', 'VS Code', 'Terminal', 'Figma'],
+  };
 
   return {
     content: (
-      <div className='skills space-y-4'>
-        <div className='text-green-400 font-bold text-lg'>Technical Skills</div>
+      <div className="skills space-y-4">
+        <div className="text-lg font-bold text-green-400">Technical Skills</div>
 
-        <pre className='skills-ascii text-blue-300 font-mono text-sm'>{asciiArt.skillsArt}</pre>
+        <pre className="skills-ascii font-mono text-sm text-blue-300">
+          {asciiArt.skillsArt}
+        </pre>
 
-        <div className='skill-category'>
-          <div className='text-blue-400 font-bold'>Frontend</div>
-          <div className='flex flex-wrap gap-2 mt-1'>
+        <div className="skill-category">
+          <div className="font-bold text-blue-400">Frontend</div>
+          <div className="mt-1 flex flex-wrap gap-2">
             {skills.frontend.map((skill, idx) => (
-              <div key={idx} className='px-2 py-1 bg-blue-900/30 text-blue-300 rounded-md text-sm'>
+              <div
+                key={idx}
+                className="rounded-md bg-blue-900/30 px-2 py-1 text-sm text-blue-300"
+              >
                 {skill}
               </div>
             ))}
           </div>
         </div>
 
-        <div className='skill-category mt-3'>
-          <div className='text-purple-400 font-bold'>Backend</div>
-          <div className='flex flex-wrap gap-2 mt-1'>
+        <div className="skill-category mt-3">
+          <div className="font-bold text-purple-400">Backend</div>
+          <div className="mt-1 flex flex-wrap gap-2">
             {skills.backend.map((skill, idx) => (
-              <div key={idx} className='px-2 py-1 bg-purple-900/30 text-purple-300 rounded-md text-sm'>
+              <div
+                key={idx}
+                className="rounded-md bg-purple-900/30 px-2 py-1 text-sm text-purple-300"
+              >
                 {skill}
               </div>
             ))}
           </div>
         </div>
 
-        <div className='skill-category mt-3'>
-          <div className='text-yellow-400 font-bold'>Tools</div>
-          <div className='flex flex-wrap gap-2 mt-1'>
+        <div className="skill-category mt-3">
+          <div className="font-bold text-yellow-400">Tools</div>
+          <div className="mt-1 flex flex-wrap gap-2">
             {skills.tools.map((skill, idx) => (
-              <div key={idx} className='px-2 py-1 bg-yellow-900/30 text-yellow-300 rounded-md text-sm'>
+              <div
+                key={idx}
+                className="rounded-md bg-yellow-900/30 px-2 py-1 text-sm text-yellow-300"
+              >
                 {skill}
               </div>
             ))}
@@ -562,40 +679,55 @@ commands.skills = (args, {}) => {
         </div>
       </div>
     ),
-    isHTML: true
-  }
-}
+    isHTML: true,
+  };
+};
 
-commands.contact = (args, {}) => {
+commands.contact = (_args, {}) => {
   return {
     content: (
-      <div className='contact space-y-4'>
-        <div className='text-green-400 font-bold text-lg'>Contact Information</div>
+      <div className="contact space-y-4">
+        <div className="text-lg font-bold text-green-400">
+          Contact Information
+        </div>
 
-        <div className='contact-methods space-y-2'>
-          <div className='flex items-center'>
-            <span className='text-blue-400 font-bold w-20'>Email:</span>
-            <a href='mailto:benydishon@gmail.com' className='text-blue-300 hover:underline'>
+        <div className="contact-methods space-y-2">
+          <div className="flex items-center">
+            <span className="w-20 font-bold text-blue-400">Email:</span>
+            <a
+              href="mailto:benydishon@gmail.com"
+              className="text-blue-300 hover:underline"
+            >
               benydishon@gmail.com
             </a>
           </div>
-          <div className='flex items-center'>
-            <span className='text-blue-400 font-bold w-20'>GitHub:</span>
-            <a href='https://github.com/BenyD' target='_blank' rel='noopener noreferrer' className='text-blue-300 hover:underline'>
+          <div className="flex items-center">
+            <span className="w-20 font-bold text-blue-400">GitHub:</span>
+            <a
+              href="https://github.com/BenyD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-300 hover:underline"
+            >
               github.com/BenyD
             </a>
           </div>
-          <div className='flex items-center'>
-            <span className='text-blue-400 font-bold w-20'>LinkedIn:</span>
-            <a href='https://www.linkedin.com/in/benydishon/' target='_blank' rel='noopener noreferrer' className='text-blue-300 hover:underline'>
+          <div className="flex items-center">
+            <span className="w-20 font-bold text-blue-400">LinkedIn:</span>
+            <a
+              href="https://www.linkedin.com/in/benydishon/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-300 hover:underline"
+            >
               linkedin.com/in/benydishon
             </a>
           </div>
         </div>
       </div>
     ),
-    isHTML: true
-  }
-}
+    isHTML: true,
+  };
+};
 
-export default commands
+export default commands;

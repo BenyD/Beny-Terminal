@@ -1,19 +1,19 @@
-'use client'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { getFileIcon } from '@/components/icons'
+import { getFileIcon } from '@/components/icons';
 
 export interface Menu {
-  title: string
-  href: string
+  title: string;
+  href: string;
 }
 
 export const Nav = ({ menu }: { menu: Menu[] }) => {
-  const pathname = usePathname()
+  const pathname = usePathname();
   return (
-    <nav className='sticky top-0 z-50 mb-2 flex select-none items-center overflow-x-auto bg-[#232323]'>
-      {menu.map(item => (
+    <nav className="sticky top-0 z-50 mb-2 flex select-none items-center overflow-x-auto bg-[#232323]">
+      {menu.map((item) => (
         <Link
           key={item.title}
           href={item.href}
@@ -24,5 +24,5 @@ export const Nav = ({ menu }: { menu: Menu[] }) => {
         </Link>
       ))}
     </nav>
-  )
-}
+  );
+};

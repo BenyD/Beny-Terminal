@@ -1,33 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   if (!supabaseAdmin) {
-    return NextResponse.json({ error: 'Supabase admin client not initialized' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Supabase admin client not initialized' },
+      { status: 500 }
+    );
   }
 
   try {
-    const formData = await request.formData()
-    const file = formData.get('file') as File
-    const displayName = formData.get('displayName') as string
-    const description = formData.get('description') as string
-    const tags = formData.get('tags') as string
-    const category = formData.get('category') as string
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    const displayName = formData.get('displayName') as string;
+    const description = formData.get('description') as string;
+    const tags = formData.get('tags') as string;
+    const category = formData.get('category') as string;
 
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
     // Generate unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${Date.now()}.${fileExt}`
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
 
     // Upload file to storage using service role
-    const { data, error } = await supabaseAdmin.storage.from('assets').upload(fileName, file)
+    const { error } = await supabaseAdmin.storage
+      .from('assets')
+      .upload(fileName, file);
 
     if (error) {
-      console.error('Error uploading file:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Error uploading file:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     // Create metadata
@@ -39,20 +44,25 @@ export async function POST(request: NextRequest) {
           display_name: displayName || file.name,
           description: description || null,
           tags: tags ? tags.split(',').map((tag: string) => tag.trim()) : [],
-          category: category || 'uncategorized'
-        }
+          category: category || 'uncategorized',
+        },
       ])
-      .select()
+      .select();
 
     if (metadataError) {
-      console.error('Error creating file metadata:', metadataError)
+      console.error('Error creating file metadata:', metadataError);
       // Try to clean up the uploaded file
-      await supabaseAdmin.storage.from('assets').remove([fileName])
-      return NextResponse.json({ error: metadataError.message }, { status: 500 })
+      await supabaseAdmin.storage.from('assets').remove([fileName]);
+      return NextResponse.json(
+        { error: metadataError.message },
+        { status: 500 }
+      );
     }
 
     // Get the public URL
-    const { data: urlData } = supabaseAdmin.storage.from('assets').getPublicUrl(fileName)
+    const { data: urlData } = supabaseAdmin.storage
+      .from('assets')
+      .getPublicUrl(fileName);
 
     return NextResponse.json(
       {
@@ -67,13 +77,16 @@ export async function POST(request: NextRequest) {
           url: urlData.publicUrl,
           size: file.size,
           type: file.type,
-          created_at: metadata[0].created_at
-        }
+          created_at: metadata[0].created_at,
+        },
       },
       { status: 201 }
-    )
+    );
   } catch (error) {
-    console.error('API error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

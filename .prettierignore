@@ -1,4 +1,11 @@
 node_modules
-coverage
+.next
+.vercel
+dist
 build
-.idea/
+coverage
+*.log
+.env*
+public
+supabase/migrations
+*.md

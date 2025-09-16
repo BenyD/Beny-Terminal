@@ -1,7 +1,7 @@
-import { updateSession } from '@/lib/auth'
+import { updateSession } from '@/lib/auth';
 
 export async function middleware(request: any) {
-  return await updateSession(request)
+  return await updateSession(request);
 }
 
 export const config = {
@@ -14,6 +14,6 @@ export const config = {
      * - public folder
      * - api routes
      */
-    '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'
-  ]
-}
+    '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+};
