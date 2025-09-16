@@ -1,4 +1,0 @@
-{
-  "installCommand": "npm clean-install --legacy-peer-deps --no-package-lock",
-  "buildCommand": "npm run build"
-}
