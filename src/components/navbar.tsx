@@ -196,27 +196,11 @@ const menu = [
     href: '/abouts/personal'
   },
   {
-    title: 'projects',
-    href: '/projects'
-  },
-  {
     title: 'stats',
     href: '/stats'
   },
   {
     title: 'terminal',
     href: '/terminal'
-  },
-  {
-    title: 'resume',
-    href: 'https://cv.beny.one'
-  },
-  {
-    title: 'photos',
-    href: '/coming-soon'
-  },
-  {
-    title: 'articles',
-    href: '/articles'
   }
 ]

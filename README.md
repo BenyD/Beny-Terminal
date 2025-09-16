@@ -14,8 +14,7 @@ A modern terminal-inspired personal website built with Next.js 15 and TailwindCS
 
 - Modern, clean design with light/dark mode support
 - Interactive terminal interface with multiple commands
-- Portfolio showcase with project details and skills
-- Blog/Articles section with MDX support
+- Personal information and skills showcase
 - Responsive layout for all devices
 - Fast page loads with Next.js App Router
 - SEO optimized with metadata

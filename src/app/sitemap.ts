@@ -6,7 +6,7 @@ import { getContents } from '@/lib/contents'
 export default function sitemap(): MetadataRoute.Sitemap {
   const URL = ENV.NEXT_PUBLIC_WEBSITE_URL
 
-  const routes = ['', '/articles', '/coding-activity', '/coding-activity/activity', '/coding-activity/editor', '/coding-activity/operating-systems'].map(route => ({
+  const routes = ['', '/coding-activity', '/coding-activity/activity', '/coding-activity/editor', '/coding-activity/operating-systems'].map(route => ({
     url: `${URL}${route}`,
     lastModified: new Date().toISOString()
   }))
@@ -16,15 +16,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date().toISOString()
   }))
 
-  const projectsRoutes = getContents('projects').map(route => ({
-    url: `${URL}/projects/${route.slug}`,
-    lastModified: new Date().toISOString()
-  }))
-
-  const articleRoutes = getContents('articles').map(route => ({
-    url: `${URL}/articles/${route.slug.toLowerCase()}`,
-    lastModified: new Date().toISOString()
-  }))
-
-  return [...routes, ...aboutRoutes, ...projectsRoutes, ...articleRoutes]
+  return [...routes, ...aboutRoutes]
 }

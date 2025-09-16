@@ -20,7 +20,7 @@ export const welcome = `
 │                                                    │
 │   Type 'help' to see available commands            │
 │   Type 'about' to learn more about me              │
-│   Type 'projects' to see my work                   │
+│   Type 'skills' to see my skills                   │
 │                                                    │
 ╰────────────────────────────────────────────────────╯
 `

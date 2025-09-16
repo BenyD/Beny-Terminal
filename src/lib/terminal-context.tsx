@@ -92,43 +92,6 @@ const defaultFileSystem: FileSystemItem[] = [
     type: 'directory',
     children: [
       {
-        name: 'projects',
-        type: 'directory',
-        children: [
-          {
-            name: 'personal-website.md',
-            type: 'file',
-            content: 'Portfolio website built with Next.js, React and Tailwind CSS. Features modern design, interactive elements, and showcases my work and skills.'
-          },
-          {
-            name: 'cv-website.md',
-            type: 'file',
-            content: 'Interactive CV website with a unique and modern design. Built with React and styled with Tailwind CSS.'
-          },
-          {
-            name: 'g-album.md',
-            type: 'file',
-            content: 'Digital photo album application allowing users to organize and share their memories with friends and family.'
-          },
-          {
-            name: 'maxsoft-ag.md',
-            type: 'file',
-            content: 'Company website for MaxSoft AG featuring their products, services, and team information. Built with modern web technologies.'
-          },
-          {
-            name: 'cgpa-calculator.md',
-            type: 'file',
-            content: 'Tool for calculating Cumulative Grade Point Average. Helps students track academic performance and plan their courses.'
-          },
-          {
-            name: 'rapidresume.md',
-            type: 'file',
-            content: 'Resume builder application that allows users to create professional resumes quickly with customizable templates and export options.'
-          },
-          { name: 'README.md', type: 'file', content: '# My Projects\n\nHere are some of my featured projects. Use `cat` command to read more about each project.' }
-        ]
-      },
-      {
         name: 'about',
         type: 'directory',
         children: [

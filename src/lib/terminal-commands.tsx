@@ -401,19 +401,10 @@ const commands: Record<string, CommandHandler> = {
             <span className='text-yellow-300'>about</span> - Display information about me
           </div>
           <div>
-            <span className='text-yellow-300'>projects</span> - View list of my projects
-          </div>
-          <div>
-            <span className='text-yellow-300'>project [name]</span> - View details for a specific project
-          </div>
-          <div>
             <span className='text-yellow-300'>skills</span> - View my skills
           </div>
           <div>
             <span className='text-yellow-300'>contact</span> - View contact information
-          </div>
-          <div>
-            <span className='text-yellow-300'>resume</span> - View my resume
           </div>
           <div>
             <span className='text-yellow-300'>neofetch</span> - Display system information
@@ -445,98 +436,6 @@ const commands: Record<string, CommandHandler> = {
           <div className='mt-2 text-blue-300'>
             Press <span className='font-bold'>Tab</span> for auto-completion, <span className='font-bold'>Ctrl+L</span> to clear screen, use <span className='font-bold'>↑/↓</span>{' '}
             keys for history.
-          </div>
-        </div>
-      ),
-      isHTML: true
-    }
-  },
-
-  // Add project command to show specific project
-  project: (args, {}) => {
-    if (!args[0]) {
-      return {
-        content: 'Usage: project [name] - Please specify a project name (e.g., project personal-website)',
-        isError: true
-      }
-    }
-
-    const projectName = args[0].toLowerCase()
-    const projectMap: Record<string, { title: string; description: string; technologies: string[]; link: string }> = {
-      'personal-website': {
-        title: 'Personal Website',
-        description: 'Portfolio website built with Next.js, React and Tailwind CSS. Features modern design, interactive elements, and showcases my work and skills.',
-        technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
-        link: 'https://beny.one'
-      },
-      'cv-website': {
-        title: 'CV Website',
-        description: 'Interactive CV website with a unique and modern design. Built with React and styled with Tailwind CSS.',
-        technologies: ['React', 'Tailwind CSS', 'JavaScript'],
-        link: 'https://cv.beny.one'
-      },
-      'g-album': {
-        title: 'G-Album',
-        description: 'Digital photo album application allowing users to organize and share their memories with friends and family.',
-        technologies: ['React', 'Node.js', 'MongoDB', 'Express'],
-        link: 'https://g-album.com'
-      },
-      'maxsoft-ag': {
-        title: 'MaxSoft AG',
-        description: 'Company website for MaxSoft AG featuring their products, services, and team information. Built with modern web technologies.',
-        technologies: ['Next.js', 'Tailwind CSS', 'TypeScript'],
-        link: 'https://maxsoft.com'
-      },
-      'cgpa-calculator': {
-        title: 'CGPA Calculator',
-        description: 'Tool for calculating Cumulative Grade Point Average. Helps students track academic performance and plan their courses.',
-        technologies: ['JavaScript', 'HTML', 'CSS'],
-        link: 'https://cgpa-calculator.beny.one'
-      },
-      rapidresume: {
-        title: 'RapidResume',
-        description: 'Resume builder application that allows users to create professional resumes quickly with customizable templates and export options.',
-        technologies: ['React', 'MongoDB', 'Express', 'Node.js'],
-        link: 'https://rapidresume.beny.one'
-      }
-    }
-
-    const project = projectMap[projectName]
-
-    if (!project) {
-      return {
-        content: `Project "${projectName}" not found. Available projects: ${Object.keys(projectMap).join(', ')}`,
-        isError: true
-      }
-    }
-
-    return {
-      content: (
-        <div className='project-detail space-y-4'>
-          <div className='flex items-center'>
-            <div className='text-green-400 font-bold text-lg mr-2'>{project.title}</div>
-            <a href={project.link} target='_blank' rel='noopener noreferrer' className='text-blue-400 hover:underline text-sm'>
-              [{project.link}]
-            </a>
-          </div>
-
-          <div className='bg-gray-800/50 p-4 rounded-md'>
-            <p className='text-gray-300'>{project.description}</p>
-          </div>
-
-          <div>
-            <div className='font-bold text-blue-400 mb-2'>Technologies:</div>
-            <div className='flex flex-wrap gap-2'>
-              {project.technologies.map((tech, idx) => (
-                <div key={idx} className='px-2 py-1 bg-blue-900/30 text-blue-300 rounded-md text-sm'>
-                  {tech}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className='text-gray-400 mt-2 text-sm'>
-            For more details, type: <span className='text-yellow-300'>cat projects/{projectName}.md</span>
           </div>
         </div>
       ),
@@ -608,7 +507,7 @@ commands.about = (args, {}) => {
           <p>Self taught software engineer based in Chennai, India.</p>
           <p>Love to learn new things and I'm always looking for new challenges to solve.</p>
         </div>
-        <div className='text-gray-400 text-sm mt-4'>Type 'skills' to see my technical skills or 'projects' for my portfolio.</div>
+        <div className='text-gray-400 text-sm mt-4'>Type 'skills' to see my technical skills.</div>
       </div>
     ),
     isHTML: true
@@ -667,80 +566,6 @@ commands.skills = (args, {}) => {
   }
 }
 
-commands.projects = (args, {}) => {
-  const projects = [
-    {
-      name: 'Personal Website',
-      description: 'Portfolio website built with Next.js, React and Tailwind CSS',
-      technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
-      link: 'https://beny.one'
-    },
-    {
-      name: 'CV Website',
-      description: 'Interactive CV website with a unique and modern design',
-      technologies: ['React', 'Tailwind CSS'],
-      link: 'https://cv.beny.one'
-    },
-    {
-      name: 'G-Album',
-      description: 'Digital photo album application for organizing and sharing memories',
-      technologies: ['React', 'Node.js', 'MongoDB'],
-      link: 'https://g-album.com'
-    },
-    {
-      name: 'MaxSoft AG',
-      description: 'Company website for MaxSoft AG featuring their products and services',
-      technologies: ['Next.js', 'Tailwind CSS', 'TypeScript'],
-      link: 'https://maxsoft.com'
-    },
-    {
-      name: 'CGPA Calculator',
-      description: 'Tool for calculating and tracking academic performance',
-      technologies: ['JavaScript', 'HTML/CSS'],
-      link: 'https://cgpa-calculator.beny.one'
-    },
-    {
-      name: 'RapidResume',
-      description: 'Resume builder application with customizable templates',
-      technologies: ['React', 'MongoDB', 'Express'],
-      link: 'https://rapidresume.beny.one'
-    }
-  ]
-
-  return {
-    content: (
-      <div className='projects space-y-4'>
-        <div className='text-green-400 font-bold text-lg'>My Projects</div>
-
-        {projects.map((project, idx) => (
-          <div key={idx} className='project p-3 border border-gray-700 rounded-md'>
-            <div className='font-bold text-blue-400'>{project.name}</div>
-            <div className='mt-1 text-gray-300'>{project.description}</div>
-            <div className='flex flex-wrap gap-2 mt-2'>
-              {project.technologies.map((tech, techIdx) => (
-                <div key={techIdx} className='px-1.5 py-0.5 bg-gray-800 text-gray-300 rounded text-xs'>
-                  {tech}
-                </div>
-              ))}
-            </div>
-            <div className='mt-2'>
-              <a href={project.link} target='_blank' rel='noopener noreferrer' className='text-green-400 hover:underline text-sm'>
-                View Project →
-              </a>
-            </div>
-          </div>
-        ))}
-
-        <div className='mt-2 text-gray-400 text-sm'>
-          To see more details, navigate to the projects directory: <span className='text-yellow-300'>cd projects</span> and use <span className='text-yellow-300'>ls</span> to list
-          files, then <span className='text-yellow-300'>cat [filename]</span> to read.
-        </div>
-      </div>
-    ),
-    isHTML: true
-  }
-}
-
 commands.contact = (args, {}) => {
   return {
     content: (
@@ -766,44 +591,6 @@ commands.contact = (args, {}) => {
               linkedin.com/in/benydishon
             </a>
           </div>
-        </div>
-      </div>
-    ),
-    isHTML: true
-  }
-}
-
-commands.resume = (args, {}) => {
-  return {
-    content: (
-      <div className='resume space-y-4'>
-        <div className='text-green-400 font-bold text-lg'>My Resume</div>
-
-        <div className='resume-section'>
-          <div className='text-blue-400 font-bold'>Education</div>
-          <div className='ml-4 mt-1 space-y-2'>
-            <div>
-              <div className='text-gray-300 font-semibold'>Self-Taught Developer</div>
-              <div className='text-gray-400'>Building projects and continuous learning</div>
-            </div>
-          </div>
-        </div>
-
-        <div className='resume-section mt-3'>
-          <div className='text-blue-400 font-bold'>Experience</div>
-          <div className='ml-4 mt-1 space-y-2'>
-            <div>
-              <div className='text-gray-300 font-semibold'>Freelance Developer</div>
-              <div className='text-gray-400'>2020 - Present</div>
-              <div className='text-gray-300 mt-1'>Developing web applications and websites for clients</div>
-            </div>
-          </div>
-        </div>
-
-        <div className='flex justify-center mt-4'>
-          <a href='https://cv.beny.one' target='_blank' rel='noopener noreferrer' className='px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md text-sm'>
-            View Full Resume
-          </a>
         </div>
       </div>
     ),

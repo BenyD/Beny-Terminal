@@ -50,7 +50,7 @@ function getMDXData(dir: string) {
   })
 }
 
-export type ContentDir = 'articles' | 'projects' | 'abouts'
+export type ContentDir = 'abouts'
 
 export const getContents = cache((contentDir: ContentDir) => {
   return getMDXData(path.join(process.cwd(), 'src/contents', contentDir))

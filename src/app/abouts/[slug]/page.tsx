@@ -13,10 +13,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata | undefined> {
   const { slug } = await params
-  let project = getContents('abouts').find(post => post.slug === slug)
-  if (!project) return
+  let about = getContents('abouts').find(post => post.slug === slug)
+  if (!about) return
 
-  let { summary: description, image } = project.metadata
+  let { summary: description, image } = about.metadata
   const title = slug.charAt(0).toUpperCase() + slug.slice(1)
   let ogImage = image ? `${ENV.NEXT_PUBLIC_WEBSITE_URL}${image}` : `${ENV.NEXT_PUBLIC_WEBSITE_URL}/api/og?title=${title}`
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata | un
       title,
       description,
       type: 'article',
-      url: `${ENV.NEXT_PUBLIC_WEBSITE_URL}/abouts/${project.slug}`,
+      url: `${ENV.NEXT_PUBLIC_WEBSITE_URL}/abouts/${about.slug}`,
       images: [
         {
           url: ogImage
@@ -44,19 +44,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata | un
 }
 
 export async function generateStaticParams() {
-  const projects = getContents('abouts')
-  return projects.map(project => ({ slug: project.slug }))
+  const abouts = getContents('abouts')
+  return abouts.map(about => ({ slug: about.slug }))
 }
 
 export default async function AboutPage({ params }: Props) {
   const { slug } = await params
-  const project = getContents('abouts').find(project => project.slug === slug)
-  if (!project) notFound()
+  const about = getContents('abouts').find(about => about.slug === slug)
+  if (!about) notFound()
 
   return (
     <MDXRenderer
       limitWidth={false}
-      source={project.content}
+      source={about.content}
       components={{
         pre: props => <pre className='bg-transparent p-0' {...props} />
       }}
