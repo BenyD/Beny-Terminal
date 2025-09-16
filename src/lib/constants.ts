@@ -1,5 +1,5 @@
 export const ENV = {
-  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://beny.one/',
+  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one/',
   NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: '',
 
   UMAMI_SHARE_TOKEN: process.env.UMAMI_SHARE_TOKEN || '',

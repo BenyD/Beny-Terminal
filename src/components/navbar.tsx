@@ -202,5 +202,9 @@ const menu = [
   {
     title: 'terminal',
     href: '/terminal'
+  },
+  {
+    title: 'assets',
+    href: '/assets'
   }
 ]

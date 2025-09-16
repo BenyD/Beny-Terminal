@@ -7,10 +7,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate": "./supabase/migrate.sh",
+    "migrate:manual": "supabase db push"
   },
   "dependencies": {
     "@rehype-pretty/transformers": "^0.13.2",
+    "@supabase/supabase-js": "^2.57.4",
     "@vercel/analytics": "^1.5.0",
     "@vercel/og": "^0.8.5",
     "@vercel/speed-insights": "^1.2.0",
@@ -19,6 +22,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.6.2",
     "geist": "^1.3.1",
+    "jose": "^6.1.0",
     "lucide-react": "^0.542.0",
     "motion": "^12.6.2",
     "next": "^15.5.2",
