@@ -81,7 +81,7 @@ export async function GET() {
     // Extract relevant data from response
     const songName = nowPlayingData.item.name;
     const artistName = nowPlayingData.item.artists
-      .map((artist: any) => artist.name)
+      .map((artist: { name: string }) => artist.name)
       .join(', ');
     const albumName = nowPlayingData.item.album.name;
     const albumImageUrl = nowPlayingData.item.album.images[0]?.url || null;

@@ -68,7 +68,7 @@ export const Container = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => abort();
-  }, []);
+  }, [isMobile]);  
 
   return (
     <main

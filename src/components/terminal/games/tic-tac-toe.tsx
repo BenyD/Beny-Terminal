@@ -47,7 +47,7 @@ export function TicTacToe({ data, onGameUpdate }: TicTacToeProps) {
     if (board.some((cell) => cell !== null) || winner) {
       updateGameState();
     }
-  }, [updateGameState]);
+  }, [updateGameState, board, winner]);  
 
   // Check for winner
   const calculateWinner = (squares: Array<string | null>): string | null => {

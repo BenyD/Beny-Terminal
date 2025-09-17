@@ -15,12 +15,12 @@ export async function generateMetadata({
   params,
 }: Props): Promise<Metadata | undefined> {
   const { slug } = await params;
-  let about = getContents('abouts').find((post) => post.slug === slug);
+  const about = getContents('abouts').find((post) => post.slug === slug);
   if (!about) return;
 
-  let { summary: description, image } = about.metadata;
+  const { summary: description, image } = about.metadata;
   const title = slug.charAt(0).toUpperCase() + slug.slice(1);
-  let ogImage = image
+  const ogImage = image
     ? `${ENV.NEXT_PUBLIC_WEBSITE_URL}${image}`
     : `${ENV.NEXT_PUBLIC_WEBSITE_URL}/api/og?title=${title}`;
 

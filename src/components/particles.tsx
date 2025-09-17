@@ -167,7 +167,7 @@ export const Particles = ({
       if (rafID.current != null) window.cancelAnimationFrame(rafID.current);
       abort();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div

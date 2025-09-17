@@ -244,7 +244,7 @@ export function TerminalProvider({ children }: { children: React.ReactNode }) {
   const findFile = (path: string): FileSystemItem | null => {
     // Handle absolute path
     const isAbsolute = path.startsWith('/');
-    let pathSegments = path.split('/').filter(Boolean);
+    const pathSegments = path.split('/').filter(Boolean);
 
     if (isAbsolute) {
       // Start from root

@@ -7,12 +7,13 @@ import {
   TerminalShell,
   FileSystemItem,
 } from './terminal-context';
+import { CommandArgs } from './types';
 import * as asciiArt from './ascii-art';
 
 // Command handler type
 export type CommandHandler = (
   args: string[],
-  terminalState: any
+  terminalState: CommandArgs
 ) => CommandOutput | Promise<CommandOutput>;
 
 // Helper function to display directory contents
@@ -56,11 +57,12 @@ const commands: Record<string, CommandHandler> = {
       return { content: 'Error: Directory not found', isError: true };
     }
 
-    let path = args[0];
+    const path = args[0];
     let targetDir = dir;
 
     if (path) {
-      const target = findCurrentDirectory().children?.find(
+      const currentDir = findCurrentDirectory();
+      const target = currentDir?.children?.find(
         (item: FileSystemItem) =>
           item.name === path && item.type === 'directory'
       );

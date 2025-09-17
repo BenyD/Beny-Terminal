@@ -24,6 +24,15 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password }),
       });
 
+      // Check if response is ok before parsing JSON
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: 'Login failed' }));
+        setError(errorData.error || `Login failed (${response.status})`);
+        return;
+      }
+
       const data = await response.json();
 
       if (data.success) {
@@ -31,7 +40,8 @@ export default function LoginPage() {
       } else {
         setError(data.error || 'Login failed');
       }
-    } catch {
+    } catch (error) {
+      console.error('Login error:', error);
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);

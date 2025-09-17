@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface FileMetadata {
   id: string;
@@ -23,7 +24,7 @@ interface Asset extends FileMetadata {
 export default function AssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [_user, setUser] = useState<any>(null);
+  const [_user, setUser] = useState<{ username: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,11 +50,11 @@ export default function AssetsPage() {
   useEffect(() => {
     checkUser();
     fetchAssets();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchAssets();
-  }, [selectedCategory, searchTerm]);
+  }, [selectedCategory, searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkUser = async () => {
     try {
@@ -656,10 +657,13 @@ export default function AssetsPage() {
                   {/* File Preview */}
                   <div className="mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-[#0a0a0a] sm:mb-4">
                     {asset.type.startsWith('image/') ? (
-                      <img
+                      <Image
                         src={asset.url}
                         alt={asset.display_name}
+                        width={300}
+                        height={300}
                         className="max-h-full max-w-full object-contain"
+                        unoptimized
                       />
                     ) : asset.type.startsWith('video/') ? (
                       <video
@@ -749,10 +753,13 @@ export default function AssetsPage() {
                   {/* Thumbnail */}
                   <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#0a0a0a]">
                     {asset.type.startsWith('image/') ? (
-                      <img
+                      <Image
                         src={asset.url}
                         alt={asset.display_name}
+                        width={64}
+                        height={64}
                         className="max-h-full max-w-full object-contain"
+                        unoptimized
                       />
                     ) : asset.type.startsWith('video/') ? (
                       <video

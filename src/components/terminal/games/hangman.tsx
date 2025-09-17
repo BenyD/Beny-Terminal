@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 // Define the component props interface
 interface HangmanProps {
@@ -25,40 +25,43 @@ export function Hangman({ data, onGameUpdate }: HangmanProps) {
   const [message, setMessage] = useState('');
 
   // Word lists by difficulty
-  const words = {
-    easy: [
-      'cat',
-      'dog',
-      'hat',
-      'bat',
-      'sun',
-      'moon',
-      'tree',
-      'book',
-      'desk',
-      'lamp',
-    ],
-    medium: [
-      'computer',
-      'keyboard',
-      'monitor',
-      'javascript',
-      'coding',
-      'terminal',
-      'function',
-      'variable',
-      'method',
-    ],
-    hard: [
-      'algorithm',
-      'asynchronous',
-      'deployment',
-      'architecture',
-      'infrastructure',
-      'optimization',
-      'refactoring',
-    ],
-  };
+  const words = useMemo(
+    () => ({
+      easy: [
+        'cat',
+        'dog',
+        'hat',
+        'bat',
+        'sun',
+        'moon',
+        'tree',
+        'book',
+        'desk',
+        'lamp',
+      ],
+      medium: [
+        'computer',
+        'keyboard',
+        'monitor',
+        'javascript',
+        'coding',
+        'terminal',
+        'function',
+        'variable',
+        'method',
+      ],
+      hard: [
+        'algorithm',
+        'asynchronous',
+        'deployment',
+        'architecture',
+        'infrastructure',
+        'optimization',
+        'refactoring',
+      ],
+    }),
+    []
+  );
 
   // Memoize the game state update function
   const updateGameState = useCallback(() => {
@@ -102,7 +105,7 @@ export function Hangman({ data, onGameUpdate }: HangmanProps) {
       setGameWon(false);
       setMessage('Guess the word!');
     }
-  }, [data]);
+  }, [data, words]);  
 
   // Save game state when it changes
   useEffect(() => {
@@ -110,7 +113,7 @@ export function Hangman({ data, onGameUpdate }: HangmanProps) {
     if (word && (guessedLetters.length > 0 || gameOver || gameWon)) {
       updateGameState();
     }
-  }, [updateGameState]);
+  }, [updateGameState, word, guessedLetters.length, gameOver, gameWon]);  
 
   // Check if the game is won
   useEffect(() => {
