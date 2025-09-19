@@ -6,6 +6,7 @@ export async function POST() {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
+    domain: '.beny.one', // Allow cookie to work across subdomains
     maxAge: 0,
   });
   return response;
