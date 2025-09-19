@@ -1,6 +1,6 @@
 # Beny.one - Personal Terminal Website
 
-A modern terminal-inspired personal website built with Next.js 15 and TailwindCSS.
+A modern terminal-inspired personal website built with Next.js 15 and TailwindCSS. Features an interactive terminal interface, assets management system, and comprehensive authentication.
 
 ## 📸 Preview
 
@@ -12,39 +12,52 @@ A modern terminal-inspired personal website built with Next.js 15 and TailwindCS
 
 ## ✨ Features
 
-- Modern, clean design with light/dark mode support
-- Interactive terminal interface with multiple commands
-- Personal information and skills showcase
-- **Assets Management System** - Upload and manage files with shareable links
-- **Simple Authentication** - Environment-based username/password login
-- Responsive layout for all devices
-- Fast page loads with Next.js App Router
-- SEO optimized with metadata
+- **Interactive Terminal Interface** - Command-line experience with multiple commands and games
+- **Assets Management System** - Upload, manage, and share files with secure authentication
+- **Traditional Authentication** - Username/password login using environment variables
+- **Modern Tech Stack** - Next.js 15, TypeScript, TailwindCSS, and Supabase
+- **Responsive Design** - Optimized for all devices and screen sizes
+- **SEO Optimized** - Meta tags, sitemap, and OpenGraph support
+- **Analytics Integration** - Umami analytics for privacy-focused tracking
+- **Code Quality** - ESLint, Prettier, and TypeScript for maintainable code
 
 ## 🛠️ Tech Stack
 
-- [Next.js 15](https://nextjs.org) - React framework for building full-stack web applications
+- [Next.js 15](https://nextjs.org) - React framework with App Router
+- [TypeScript](https://typescriptlang.org) - Type-safe JavaScript
 - [TailwindCSS](https://tailwindcss.com) - Utility-first CSS framework
 - [Supabase](https://supabase.com) - File storage and database
-- [JWT](https://jwt.io) - JSON Web Tokens for authentication
+- [JWT](https://jwt.io) - JSON Web Tokens for secure authentication
+- [ESLint](https://eslint.org) - Code linting and quality assurance
+- [Prettier](https://prettier.io) - Code formatting
 - [Umami Analytics](https://umami.is) - Privacy-focused analytics
-- [TypeScript](https://typescriptlang.org) - Type-safe JavaScript
 - [MDX](https://mdxjs.com) - Markdown for the component era
 
 ## 📝 Project Structure
 
-- `src/components` - Reusable UI components
-- `src/app` - Next.js 15 app router pages and layout
-- `src/lib` - Utility functions and constants
-- `supabase/migrations` - Database migration files
-- `public` - Static assets
+```
+src/
+├── app/                    # Next.js 15 App Router
+│   ├── api/               # API routes (auth, files, etc.)
+│   ├── assets/            # Protected assets management
+│   ├── login/             # Authentication page
+│   └── terminal/          # Main terminal interface
+├── components/            # Reusable UI components
+│   ├── terminal/          # Terminal-specific components
+│   └── magicui/           # UI component library
+├── lib/                   # Utility functions and constants
+│   ├── auth.ts           # Authentication logic
+│   ├── terminal-commands.tsx # Terminal command definitions
+│   └── types.ts          # TypeScript type definitions
+└── contents/             # MDX content files
+```
 
 ## 🚀 Quick Start
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/beny-terminal.git
+   git clone https://github.com/BenyD/beny-terminal.git
    cd beny-terminal
    ```
 
@@ -62,19 +75,82 @@ A modern terminal-inspired personal website built with Next.js 15 and TailwindCS
    ```
 
 4. **Set up Supabase**
-   - Follow the instructions in `SUPABASE_SETUP.md`
+   - Create a new Supabase project
    - Run migrations: `npm run migrate`
+   - Configure storage bucket for file uploads
 
 5. **Start development server**
    ```bash
    npm run dev
    ```
 
-## 📚 Documentation
+## 🔐 Authentication
 
-- [Supabase Setup Guide](./SUPABASE_SETUP.md) - Database and storage configuration
-- [Simple Auth Setup](./SIMPLE_AUTH_SETUP.md) - Authentication configuration
-- [Assets Management](./ASSETS_README.md) - File upload and management system
+The application uses a simple username/password authentication system:
+
+- **Username**: Set via `ADMIN_USERNAME` environment variable
+- **Password**: Set via `ADMIN_PASSWORD` environment variable
+- **JWT Secret**: Set via `JWT_SECRET` environment variable (minimum 32 characters)
+
+### Environment Variables
+
+```bash
+# Authentication
+ADMIN_USERNAME=your_username
+ADMIN_PASSWORD=your_password
+JWT_SECRET=your_jwt_secret_key_at_least_32_characters_long
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Optional Services
+UMAMI_SHARE_TOKEN=your_umami_token
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+OPENWEATHER_API_KEY=your_openweather_api_key
+```
+
+## 🛠️ Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix ESLint issues
+npm run format       # Format code with Prettier
+npm run type-check   # Run TypeScript type checking
+npm run check-all    # Run all checks (lint, format, type-check)
+```
+
+### Code Quality
+
+- **ESLint**: Modern flat config format with Next.js and TypeScript rules
+- **Prettier**: Consistent code formatting
+- **TypeScript**: Full type safety
+- **Husky**: Pre-commit hooks for quality assurance
+
+## 🚀 Deployment
+
+### Vercel Deployment
+
+1. **Set environment variables** in Vercel Dashboard
+2. **Deploy** from GitHub repository
+3. **Configure domain** (optional)
+
+### Required Environment Variables for Production
+
+Make sure to set these in your Vercel project settings:
+
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD` 
+- `JWT_SECRET`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
 ## 📄 License
 
