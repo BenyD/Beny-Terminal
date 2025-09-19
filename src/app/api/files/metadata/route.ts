@@ -38,12 +38,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Add custom URLs to the response
+    // Add custom URLs to the response using assets subdomain
     const baseUrl =
-      process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
+      process.env.NEXT_PUBLIC_ASSETS_URL || 'https://assets.beny.one';
     const dataWithUrls = data?.map((item) => ({
       ...item,
-      url: `${baseUrl}/assets/${item.file_name}`,
+      url: `${baseUrl}/${item.file_name}`,
     }));
 
     return NextResponse.json(dataWithUrls);

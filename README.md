@@ -109,6 +109,9 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 UMAMI_SHARE_TOKEN=your_umami_token
 SPOTIFY_CLIENT_ID=your_spotify_client_id
 OPENWEATHER_API_KEY=your_openweather_api_key
+
+# Assets Configuration
+NEXT_PUBLIC_ASSETS_URL=https://assets.beny.one
 ```
 
 ## 🛠️ Development
@@ -151,6 +154,29 @@ Make sure to set these in your Vercel project settings:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_ASSETS_URL` (set to `https://assets.beny.one`)
+
+### Custom Asset Subdomain Setup
+
+The application uses a custom subdomain for assets (`assets.beny.one`) to provide clean, short URLs:
+
+1. **Add DNS CNAME record**:
+   ```
+   Type: CNAME
+   Name: assets
+   Value: terminal.beny.one
+   ```
+
+2. **Add domain in Vercel**:
+   - Go to Project Settings → Domains
+   - Add `assets.beny.one`
+
+3. **Set environment variable**:
+   ```
+   NEXT_PUBLIC_ASSETS_URL=https://assets.beny.one
+   ```
+
+**Result**: Assets will be accessible at `https://assets.beny.one/filename.png` instead of the long Supabase URLs.
 
 ## 📄 License
 

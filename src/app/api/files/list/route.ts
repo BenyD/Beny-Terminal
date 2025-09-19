@@ -48,10 +48,10 @@ export async function GET(request: NextRequest) {
 
           const fileInfo = fileData?.[0];
 
-          // Generate custom short URL
+          // Generate custom short URL using assets subdomain
           const baseUrl =
-            process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
-          const customUrl = `${baseUrl}/assets/${meta.file_name}`;
+            process.env.NEXT_PUBLIC_ASSETS_URL || 'https://assets.beny.one';
+          const customUrl = `${baseUrl}/${meta.file_name}`;
 
           return {
             id: meta.id,

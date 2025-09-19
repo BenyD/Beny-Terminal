@@ -32,12 +32,12 @@ export async function PUT(
       );
     }
 
-    // Add custom URL to the response
+    // Add custom URL to the response using assets subdomain
     const baseUrl =
-      process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
+      process.env.NEXT_PUBLIC_ASSETS_URL || 'https://assets.beny.one';
     const dataWithUrl = {
       ...data,
-      url: `${baseUrl}/assets/${data.file_name}`,
+      url: `${baseUrl}/${data.file_name}`,
     };
 
     return NextResponse.json(dataWithUrl);

@@ -59,10 +59,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate custom short URL
+    // Generate custom short URL using assets subdomain
     const baseUrl =
-      process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
-    const customUrl = `${baseUrl}/assets/${fileName}`;
+      process.env.NEXT_PUBLIC_ASSETS_URL || 'https://assets.beny.one';
+    const customUrl = `${baseUrl}/${fileName}`;
 
     return NextResponse.json(
       {
