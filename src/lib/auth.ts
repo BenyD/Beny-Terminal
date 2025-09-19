@@ -30,7 +30,19 @@ export async function login(username: string, password: string) {
   const envUsername = process.env.ADMIN_USERNAME;
   const envPassword = process.env.ADMIN_PASSWORD;
 
+  // Debug logging (remove in production)
+  console.log('Login attempt:', {
+    username,
+    hasEnvUsername: !!envUsername,
+    hasEnvPassword: !!envPassword,
+    envUsername: envUsername ? '***' : 'undefined',
+  });
+
   if (!envUsername || !envPassword) {
+    console.error('Admin credentials not configured:', {
+      hasUsername: !!envUsername,
+      hasPassword: !!envPassword,
+    });
     throw new Error('Admin credentials not configured');
   }
 
@@ -39,6 +51,10 @@ export async function login(username: string, password: string) {
     return { success: true, token };
   }
 
+  console.log('Invalid credentials:', {
+    usernameMatch: username === envUsername,
+    passwordMatch: password === envPassword,
+  });
   return { success: false, error: 'Invalid credentials' };
 }
 
