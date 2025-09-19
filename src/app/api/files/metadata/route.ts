@@ -38,7 +38,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(data);
+    // Add custom URLs to the response
+    const baseUrl =
+      process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
+    const dataWithUrls = data?.map((item) => ({
+      ...item,
+      url: `${baseUrl}/assets/${item.file_name}`,
+    }));
+
+    return NextResponse.json(dataWithUrls);
   } catch (error) {
     console.error('Error in GET /api/files/metadata:', error);
     return NextResponse.json(

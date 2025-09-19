@@ -32,7 +32,15 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(data);
+    // Add custom URL to the response
+    const baseUrl =
+      process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
+    const dataWithUrl = {
+      ...data,
+      url: `${baseUrl}/assets/${data.file_name}`,
+    };
+
+    return NextResponse.json(dataWithUrl);
   } catch (error) {
     console.error('Error in PUT /api/files/metadata/[id]:', error);
     return NextResponse.json(

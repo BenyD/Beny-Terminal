@@ -41,17 +41,17 @@ export async function GET(request: NextRequest) {
     const assets = await Promise.all(
       metadata.map(async (meta) => {
         try {
-          // Get public URL
-          const { data: urlData } = supabaseAdmin!.storage
-            .from('assets')
-            .getPublicUrl(meta.file_name);
-
           // Get file details from storage
           const { data: fileData } = await supabaseAdmin!.storage
             .from('assets')
             .list('', { search: meta.file_name });
 
           const fileInfo = fileData?.[0];
+
+          // Generate custom short URL
+          const baseUrl =
+            process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
+          const customUrl = `${baseUrl}/assets/${meta.file_name}`;
 
           return {
             id: meta.id,
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
             description: meta.description,
             tags: meta.tags || [],
             category: meta.category,
-            url: urlData.publicUrl,
+            url: customUrl,
             size: fileInfo?.metadata?.size || 0,
             type: fileInfo?.metadata?.mimetype || 'application/octet-stream',
             created_at: meta.created_at,

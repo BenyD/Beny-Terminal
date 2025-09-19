@@ -59,10 +59,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the public URL
-    const { data: urlData } = supabaseAdmin.storage
-      .from('assets')
-      .getPublicUrl(fileName);
+    // Generate custom short URL
+    const baseUrl =
+      process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one';
+    const customUrl = `${baseUrl}/assets/${fileName}`;
 
     return NextResponse.json(
       {
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
           description: metadata[0].description,
           tags: metadata[0].tags,
           category: metadata[0].category,
-          url: urlData.publicUrl,
+          url: customUrl,
           size: file.size,
           type: file.type,
           created_at: metadata[0].created_at,
