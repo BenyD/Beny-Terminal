@@ -7,12 +7,27 @@ const secret = new TextEncoder().encode(
 );
 const ALGORITHM = 'HS256';
 
+// Debug JWT secret loading
+console.log('JWT Secret loaded:', {
+  hasSecret: !!process.env.JWT_SECRET,
+  secretLength: process.env.JWT_SECRET?.length || 0,
+  usingDefault: !process.env.JWT_SECRET,
+});
+
 export async function createToken(payload: { username: string }) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: ALGORITHM })
-    .setIssuedAt()
-    .setExpirationTime('24h')
-    .sign(secret);
+  try {
+    console.log('Creating JWT token for:', payload.username);
+    const token = await new SignJWT(payload)
+      .setProtectedHeader({ alg: ALGORITHM })
+      .setIssuedAt()
+      .setExpirationTime('24h')
+      .sign(secret);
+    console.log('JWT token created successfully');
+    return token;
+  } catch (error) {
+    console.error('Error creating JWT token:', error);
+    throw error;
+  }
 }
 
 export async function verifyToken(token: string) {

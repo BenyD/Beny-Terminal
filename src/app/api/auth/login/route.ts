@@ -3,18 +3,28 @@ import { login } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Login API called');
     const { username, password } = await request.json();
+    console.log('Login request data:', { username, hasPassword: !!password });
 
     if (!username || !password) {
+      console.log('Missing username or password');
       return NextResponse.json(
         { error: 'Username and password are required' },
         { status: 400 }
       );
     }
 
+    console.log('Calling login function...');
     const result = await login(username, password);
+    console.log('Login result:', {
+      success: result.success,
+      hasToken: !!result.token,
+      error: result.error,
+    });
 
     if (result.success && result.token) {
+      console.log('Login successful, setting cookie');
       const response = NextResponse.json({ success: true });
       response.cookies.set('auth-token', result.token, {
         httpOnly: true,
@@ -24,6 +34,7 @@ export async function POST(request: NextRequest) {
       });
       return response;
     } else {
+      console.log('Login failed:', result.error);
       return NextResponse.json({ error: result.error }, { status: 401 });
     }
   } catch (error) {
