@@ -1,6 +1,9 @@
 export const ENV = {
   NEXT_PUBLIC_WEBSITE_URL:
-    process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://terminal.beny.one/',
+    process.env.NEXT_PUBLIC_WEBSITE_URL ||
+    (process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000/'
+      : 'https://terminal.beny.one/'),
   NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: '',
 
   UMAMI_SHARE_TOKEN: process.env.UMAMI_SHARE_TOKEN || '',

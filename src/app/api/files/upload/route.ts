@@ -16,14 +16,31 @@ export async function POST(request: NextRequest) {
     const description = formData.get('description') as string;
     const tags = formData.get('tags') as string;
     const category = formData.get('category') as string;
+    const customFileName = formData.get('customFileName') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
+    // Use custom filename if provided, otherwise use original filename
+    let fileName = customFileName || file.name;
+
+    // Ensure filename has proper extension
+    const originalExt = file.name.split('.').pop();
+    if (!fileName.includes('.')) {
+      fileName = `${fileName}.${originalExt}`;
+    }
+
+    // Check if file already exists and add timestamp if needed
+    const { data: existingFiles } = await supabaseAdmin.storage
+      .from('assets')
+      .list('', { search: fileName });
+
+    if (existingFiles && existingFiles.length > 0) {
+      const fileExt = fileName.split('.').pop();
+      const nameWithoutExt = fileName.replace(/\.[^/.]+$/, '');
+      fileName = `${nameWithoutExt}-${Date.now()}.${fileExt}`;
+    }
 
     // Upload file to storage using service role
     const { error } = await supabaseAdmin.storage

@@ -89,12 +89,9 @@ export async function updateSession(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
 
   if (!token) {
-    if (
-      request.nextUrl.pathname.startsWith('/assets') ||
-      request.nextUrl.hostname === 'assets.beny.one'
-    ) {
-      // Redirect to main domain login page
-      const loginUrl = new URL('/login', 'https://terminal.beny.one');
+    if (request.nextUrl.pathname.startsWith('/assets')) {
+      // Redirect to login page on current domain
+      const loginUrl = new URL('/login', request.nextUrl.origin);
       return NextResponse.redirect(loginUrl);
     }
     return NextResponse.next();
@@ -102,13 +99,9 @@ export async function updateSession(request: NextRequest) {
 
   const payload = await verifyToken(token);
 
-  if (
-    !payload &&
-    (request.nextUrl.pathname.startsWith('/assets') ||
-      request.nextUrl.hostname === 'assets.beny.one')
-  ) {
-    // Redirect to main domain login page
-    const loginUrl = new URL('/login', 'https://terminal.beny.one');
+  if (!payload && request.nextUrl.pathname.startsWith('/assets')) {
+    // Redirect to login page on current domain
+    const loginUrl = new URL('/login', request.nextUrl.origin);
     return NextResponse.redirect(loginUrl);
   }
 

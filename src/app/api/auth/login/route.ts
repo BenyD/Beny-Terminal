@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        domain: '.beny.one', // Allow cookie to work across subdomains
+        domain: process.env.NODE_ENV === 'production' ? '.beny.one' : undefined, // Only set domain in production
         maxAge: 24 * 60 * 60, // 24 hours
       });
       return response;

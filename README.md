@@ -7,8 +7,6 @@ A modern terminal-inspired personal website built with Next.js 15 and TailwindCS
 ![Preview 1](./public/preview-1.png)
 ![Preview 2](./public/preview-2.png)
 ![Preview 3](./public/preview-3.png)
-![Preview 4](./public/preview-4.png)
-![Preview 5](./public/preview-5.png)
 
 ## ✨ Features
 

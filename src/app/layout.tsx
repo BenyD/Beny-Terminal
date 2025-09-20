@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AppShell } from '@/components/app-shell';
 import { ResponsiveIndicator } from '@/components/responsive-indicator';
+import { Toaster } from 'sonner';
 
 import { ENV } from '@/lib/constants';
 import { Particles } from '@/components/particles';
@@ -76,6 +77,17 @@ export default async function RootLayout({ children }: Readonly<Props>) {
         )}
         <Analytics />
         <SpeedInsights />
+        <Toaster
+          theme="dark"
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#1a1a1a',
+              border: '1px solid #444444',
+              color: '#ffffff',
+            },
+          }}
+        />
       </body>
     </html>
   );

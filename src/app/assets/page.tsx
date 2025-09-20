@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 interface FileMetadata {
   id: string;
@@ -32,6 +33,8 @@ export default function AssetsPage() {
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectMode, setSelectMode] = useState(false);
+  const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
   const [newFile, setNewFile] = useState<{
     file: File | null;
     displayName: string;
@@ -157,6 +160,8 @@ export default function AssetsPage() {
   };
 
   const handleDelete = async (fileName: string) => {
+    setDeletingFiles((prev) => new Set(prev).add(fileName));
+
     try {
       const response = await fetch('/api/files/delete', {
         method: 'DELETE',
@@ -167,19 +172,36 @@ export default function AssetsPage() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error deleting file:', errorData.error);
-        alert(`Delete failed: ${errorData.error}`);
+        toast.error(`Delete failed: ${errorData.error}`, {
+          description:
+            'Please try again or contact support if the issue persists.',
+        });
         return;
       }
 
       await fetchAssets();
+      toast.success('File deleted successfully', {
+        description: 'The file has been permanently removed from your assets.',
+      });
     } catch (error) {
       console.error('Error deleting file:', error);
-      alert('An unexpected error occurred during deletion');
+      toast.error('An unexpected error occurred', {
+        description:
+          'Please try again or contact support if the issue persists.',
+      });
+    } finally {
+      setDeletingFiles((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(fileName);
+        return newSet;
+      });
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedFiles.length === 0) return;
+
+    setBulkDeleting(true);
 
     try {
       const response = await fetch('/api/files/bulk', {
@@ -194,9 +216,26 @@ export default function AssetsPage() {
       if (response.ok) {
         setSelectedFiles([]);
         await fetchAssets();
+        toast.success(`${selectedFiles.length} file(s) deleted successfully`, {
+          description:
+            'All selected files have been permanently removed from your assets.',
+        });
+      } else {
+        const errorData = await response.json();
+        toast.error('Bulk delete failed', {
+          description:
+            errorData.error ||
+            'Please try again or contact support if the issue persists.',
+        });
       }
     } catch (error) {
       console.error('Error bulk deleting files:', error);
+      toast.error('An unexpected error occurred', {
+        description:
+          'Please try again or contact support if the issue persists.',
+      });
+    } finally {
+      setBulkDeleting(false);
     }
   };
 
@@ -250,7 +289,9 @@ export default function AssetsPage() {
 
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url);
-    // You could add a toast notification here
+    toast.success('Link copied to clipboard', {
+      description: 'The asset URL has been copied to your clipboard.',
+    });
   };
 
   const formatFileSize = (bytes: number) => {
@@ -270,6 +311,10 @@ export default function AssetsPage() {
       minute: '2-digit',
     });
   };
+
+  const LoadingSpinner = () => (
+    <div className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-[#898989] border-t-transparent" />
+  );
 
   const handleLogout = async () => {
     try {
@@ -343,6 +388,7 @@ export default function AssetsPage() {
                 <option value="uncategorized">Uncategorized</option>
                 <option value="images">Images</option>
                 <option value="videos">Videos</option>
+                <option value="audio">Audio</option>
                 <option value="documents">Documents</option>
                 <option value="other">Other</option>
               </select>
@@ -362,9 +408,11 @@ export default function AssetsPage() {
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button
                   onClick={handleBulkDelete}
-                  className="rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+                  disabled={bulkDeleting}
+                  className="flex items-center gap-2 rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Delete Selected
+                  {bulkDeleting && <LoadingSpinner />}
+                  {bulkDeleting ? 'Deleting...' : 'Delete Selected'}
                 </button>
                 <select
                   onChange={(e) => handleBulkMove(e.target.value)}
@@ -378,6 +426,7 @@ export default function AssetsPage() {
                   <option value="uncategorized">Uncategorized</option>
                   <option value="images">Images</option>
                   <option value="videos">Videos</option>
+                  <option value="audio">Audio</option>
                   <option value="documents">Documents</option>
                   <option value="other">Other</option>
                 </select>
@@ -418,7 +467,7 @@ export default function AssetsPage() {
                   }
                   disabled={uploading}
                   className="block w-full text-sm text-[#898989]/90 transition-colors file:mr-4 file:rounded-md file:border-0 file:bg-[#444444] file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#555555] disabled:opacity-50"
-                  accept="image/*,video/*"
+                  accept="image/*,video/*,audio/*,.pdf,.svg"
                 />
               </div>
 
@@ -501,6 +550,7 @@ export default function AssetsPage() {
                     <option value="uncategorized">Uncategorized</option>
                     <option value="images">Images</option>
                     <option value="videos">Videos</option>
+                    <option value="audio">Audio</option>
                     <option value="documents">Documents</option>
                     <option value="other">Other</option>
                   </select>
@@ -621,7 +671,7 @@ export default function AssetsPage() {
         <div
           className={
             viewMode === 'grid'
-              ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4'
+              ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:gap-6'
               : 'space-y-3'
           }
         >
@@ -656,7 +706,8 @@ export default function AssetsPage() {
 
                   {/* File Preview */}
                   <div className="mb-3 flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-[#0a0a0a] sm:mb-4">
-                    {asset.type.startsWith('image/') ? (
+                    {asset.type.startsWith('image/') ||
+                    asset.type === 'image/svg+xml' ? (
                       <Image
                         src={asset.url}
                         alt={asset.display_name}
@@ -671,6 +722,30 @@ export default function AssetsPage() {
                         className="max-h-full max-w-full object-contain"
                         controls
                       />
+                    ) : asset.type.startsWith('audio/') ? (
+                      <div className="flex flex-col items-center justify-center space-y-2 p-4">
+                        <div className="text-4xl">🎵</div>
+                        <audio
+                          src={asset.url}
+                          controls
+                          className="w-full max-w-xs"
+                        />
+                      </div>
+                    ) : asset.type === 'application/pdf' ? (
+                      <div className="flex flex-col items-center justify-center space-y-2 p-4">
+                        <div className="text-4xl">📄</div>
+                        <div className="text-center text-xs text-[#898989]/60">
+                          PDF Document
+                        </div>
+                        <a
+                          href={asset.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded bg-[#555555] px-3 py-1 text-xs text-white hover:bg-[#666666]"
+                        >
+                          Open PDF
+                        </a>
+                      </div>
                     ) : (
                       <div className="text-center text-[#898989]/60">
                         <div className="mb-1 text-3xl sm:mb-2 sm:text-4xl">
@@ -724,9 +799,15 @@ export default function AssetsPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(asset.file_name)}
-                        className="rounded-md bg-red-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-red-700 sm:text-sm"
+                        disabled={deletingFiles.has(asset.file_name)}
+                        className="flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
                       >
-                        Delete
+                        {deletingFiles.has(asset.file_name) && (
+                          <LoadingSpinner />
+                        )}
+                        {deletingFiles.has(asset.file_name)
+                          ? 'Deleting...'
+                          : 'Delete'}
                       </button>
                     </div>
 
@@ -752,7 +833,8 @@ export default function AssetsPage() {
 
                   {/* Thumbnail */}
                   <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#0a0a0a]">
-                    {asset.type.startsWith('image/') ? (
+                    {asset.type.startsWith('image/') ||
+                    asset.type === 'image/svg+xml' ? (
                       <Image
                         src={asset.url}
                         alt={asset.display_name}
@@ -767,6 +849,14 @@ export default function AssetsPage() {
                         className="max-h-full max-w-full object-contain"
                         controls
                       />
+                    ) : asset.type.startsWith('audio/') ? (
+                      <div className="text-center text-[#898989]/60">
+                        <div className="text-lg">🎵</div>
+                      </div>
+                    ) : asset.type === 'application/pdf' ? (
+                      <div className="text-center text-[#898989]/60">
+                        <div className="text-lg">📄</div>
+                      </div>
                     ) : (
                       <div className="text-center text-[#898989]/60">
                         <div className="text-lg">📄</div>
@@ -824,9 +914,13 @@ export default function AssetsPage() {
                     </button>
                     <button
                       onClick={() => handleDelete(asset.file_name)}
-                      className="rounded-md bg-red-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-red-700 sm:text-sm"
+                      disabled={deletingFiles.has(asset.file_name)}
+                      className="flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
                     >
-                      Delete
+                      {deletingFiles.has(asset.file_name) && <LoadingSpinner />}
+                      {deletingFiles.has(asset.file_name)
+                        ? 'Deleting...'
+                        : 'Delete'}
                     </button>
                   </div>
                 </div>
